@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string('alergico');
             $table->string('condicion_especial');
             $table->string('problemas_fisicos');
+            $table->string('cedulado')->nullable()->default('No');
 
             $table->timestamps();
         });

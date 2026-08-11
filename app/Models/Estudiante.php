@@ -23,7 +23,8 @@ class Estudiante extends Model
         'tratamiento_medico',
         'alergico',
         'condicion_especial',
-        'problemas_fisicos'
+        'problemas_fisicos',
+        'cedulado'
     ];
 
     // Relación con EstudiantePeriodo

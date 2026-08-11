@@ -14,6 +14,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import debounce from "lodash/debounce";
 import Swal from "sweetalert2";
 import { confirmDelete } from "@/Utils/confirmDelete";
+import {
+    Field,
+} from "@/Components/Layout/FormComponents";
 
 export default function Index({
     afiliados,
@@ -403,16 +406,16 @@ export default function Index({
                                     key={item.id}
                                     className="hover:bg-slate-50 transition-all"
                                 >
-                                    <td className="px-6 py-3 font-black text-slate-700 uppercase">
+                                    <td className="px-6 py-2 font-black text-slate-700 uppercase">
                                         {item.empleado}{" "}
                                         <p className="text-[9px] text-slate-700 font-bold">
                                             CI: {item.cedula}
                                         </p>
                                     </td>
-                                    <td className="px-6 py-3 text-center font-mono font-bold text-slate-500">
+                                    <td className="px-6 py-2 text-center font-mono font-bold text-slate-500">
                                         {item.identificador}
                                     </td>
-                                    <td className="px-6 py-3 text-center">
+                                    <td className="px-6 py-2 text-center">
                                         <button
                                             onClick={() =>
                                                 handleTogglePago(item.pago_id)
@@ -428,12 +431,11 @@ export default function Index({
                                                     : item.estado_pago ===
                                                         "Pendiente"
                                                       ? "bg-rose-500 text-white "
-                                                      : "bg-slate-100 text-slate-300"
+                                                      : "bg-slate-700 text-slate-300"
                                             }`}
                                         >
                                             {processingId === item.pago_id ? (
-                                                <Icons.Loader2
-                                                    className="animate-spin"
+                                                <Icons.LucideXCircle
                                                     size={14}
                                                 />
                                             ) : item.estado_pago ===
@@ -451,7 +453,7 @@ export default function Index({
                                             </p>
                                         )}
                                     </td>
-                                    <td className="px-6 py-3 text-center">
+                                    <td className="px-6 py-2 text-center">
                                         <div className="flex justify-center gap-2">
                                             <button
                                                 onClick={() =>

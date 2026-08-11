@@ -15,33 +15,33 @@ const modules = [
         items: ["Causas de Egreso", "Liquidaciones", "Expediente Digital"],
     },
     {
-        title: "PERMISOS EVENTUALES",
+        title: "PERMISOS GENERALES",
         subtitle: "Asignaciones Pasadas",
         icon: "CalendarClock",
         color: "emerald",
         route: "empleados.inactivos.permisos.index",
-        items: ["Justificativos Médicos", "Diligencias Breves", "Resoluciones"],
+        items: ["Permisos Evnetuales", "Permisos Permanantes", "Vacaciones"],
     },
-    {
-        title: "PERMISOS PERMANENTES",
-        subtitle: "Control de Horarios",
-        icon: "ShieldAlert",
-        color: "orange",
-        route: "empleados.inactivos.permisos.permanentes.index",
-        items: [
-            "Días Específicos",
-            "Control Recurrente",
-            "Vigencia Indefinida",
-        ],
-    },
-    {
-        title: "PERMISOS VACACIONES",
-        subtitle: "Historial de Periodos",
-        icon: "Umbrella",
-        color: "red",
-        route: "empleados.inactivos.permisos.vacaciones.index",
-        items: ["Fechas Limitadas", "Control de Retorno", "Años Anteriores"],
-    },
+    // {
+    //     title: "PERMISOS PERMANENTES",
+    //     subtitle: "Control de Horarios",
+    //     icon: "ShieldAlert",
+    //     color: "orange",
+    //     route: "empleados.inactivos.permisos.index",
+    //     items: [
+    //         "Días Específicos",
+    //         "Control Recurrente",
+    //         "Vigencia Indefinida",
+    //     ],
+    // },
+    // {
+    //     title: "PERMISOS VACACIONES",
+    //     subtitle: "Historial de Periodos",
+    //     icon: "Umbrella",
+    //     color: "red",
+    //     route: "empleados.inactivos.permisos.index",
+    //     items: ["Fechas Limitadas", "Control de Retorno", "Años Anteriores"],
+    // },
 ];
 
 // Definir estilos completos para cada color
@@ -148,7 +148,7 @@ export default function Index() {
                 icon="UserMinus" // Cambiado de 'UserPlus' a 'UserMinus' para que coincida
                 showSearch={false}
             >
-                <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4">
                     {modules.map((mod, idx) => {
                         const IconComponent = Icons[mod.icon];
                         const style = neonStyles[mod.color] || neonStyles.blue; // Fallback seguro

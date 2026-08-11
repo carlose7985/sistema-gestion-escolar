@@ -40,7 +40,6 @@ class ControlWifiController extends Controller
         // Generamos el array: [2024, 2025, 2026...]
         $availableYears = range($startYear, $endYear);
 
-
         // 3. LÓGICA DE BÚSQUEDA Y PAGINACIÓN
         $periodoBusqueda = Carbon::createFromDate($year, $month, 1)->format('Y-m-d');
 
@@ -57,7 +56,7 @@ class ControlWifiController extends Controller
                 })->orWhere('identificador_dispositivo', 'like', "%{$search}%");
             })
             ->orderBy('id', 'asc')
-            ->paginate(10) // Ajustado a 10, puedes dejarlo en 5 si prefieres
+            ->paginate(8) // Ajustado a 10, puedes dejarlo en 5 si prefieres
             ->withQueryString()
             ->through(function ($af) use ($periodoBusqueda) {
 
@@ -72,7 +71,7 @@ class ControlWifiController extends Controller
                     'cedula' => $af->empleados->cedula,
                     'identificador' => $af->identificador_dispositivo,
                     'pago_id' => $pago ? $pago->id : null,
-                    'estado_pago' => $pago ? $pago->estado : 'No Generado',
+                    'estado_pago' => $pago ? $pago->estado : 'Periodo no Generado',
                     'fecha_pago_realizado' => $pago && $pago->fecha_pago
                         ? Carbon::parse($pago->fecha_pago)->format('d-m-Y H:i')
                         : null,

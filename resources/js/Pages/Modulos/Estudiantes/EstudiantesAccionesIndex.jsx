@@ -50,11 +50,11 @@ const modules = [
         route: "estudiantes.acciones.condiciones.especiales.index",
     },
     {
-        title: "POR ASIGNAR",
-        subtitle: "Recursos",
+        title: "ESTUDIANTES NO CEDULADOS",
+        subtitle: "Estudiantes",
         icon: "Users",
         color: "emerald",
-        route: "empleados.acciones.index",
+        route: "estudiantes.acciones.no.cedulados.index",
     },
     {
         title: "POR ASIGNAR",

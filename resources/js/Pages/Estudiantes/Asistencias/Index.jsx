@@ -38,6 +38,7 @@ export default function AsistenciaEstudiantes({
     anioSugerido,
     periodoActivo,
     periodoNombre,
+    mesBloqueado = false, // 🔥 NUEVA PROP
 }) {
     // --- ESTADOS ---
     const [processing, setProcessing] = useState(false);
@@ -574,6 +575,22 @@ export default function AsistenciaEstudiantes({
                         </p>
                     </div>
                 )}
+                {mesBloqueado && (
+                    <div className="mb-3 bg-amber-100 border-2 border-amber-300 text-amber-800 p-4 rounded-2xl flex items-center gap-3 shadow-lg animate-in slide-in-from-top-4">
+                        <Icons.Lock size={20} className="text-amber-600" />
+                        <div>
+                            <p className="text-sm font-black uppercase tracking-tight">
+                                Mes Cerrado
+                            </p>
+                            <p className="text-xs font-bold text-amber-700">
+                                El mes de{" "}
+                                {dayjs(fechaSeleccionada).format("MMMM YYYY")}{" "}
+                                está cerrado. No se pueden modificar
+                                asistencias.
+                            </p>
+                        </div>
+                    </div>
+                )}
                 {/* Alerta de días faltantes - responsive */}
                 {fechasFaltantes?.length > 0 && !isHoliday && !isWeekend && (
                     <div className="mb-2 bg-rose-300 text-white p-3 rounded-2xl md:rounded-[2.5rem] shadow-2xl border-b-4 border-indigo-500 animate-in slide-in-from-top-4">
@@ -853,10 +870,13 @@ export default function AsistenciaEstudiantes({
                                                                                 .value,
                                                                         )
                                                                     }
-                                                                    className="w-16 md:w-20 py-2 md:py-3 bg-blue-50 border-2 border-blue-100 focus:border-blue-500 focus:bg-white rounded-xl md:rounded-2xl text-center text-base md:text-lg font-black text-blue-700 transition-all outline-none"
+                                                                    disabled={
+                                                                        mesBloqueado
+                                                                    } // 🔥 DESHABILITAR
+                                                                    className={`w-16 md:w-20 py-2 md:py-3 bg-blue-50 border-2 border-blue-100 focus:border-blue-500 focus:bg-white rounded-xl md:rounded-2xl text-center text-base md:text-lg font-black text-blue-700 transition-all outline-none ${mesBloqueado ? "opacity-60 cursor-not-allowed" : ""}`}
                                                                 />
                                                                 {/* Indicador a la derecha */}
-                                                                <div className="flex flex-col items-start leading-none">
+                                                                {/* <div className="flex flex-col items-start leading-none">
                                                                     <span className="text-[8px] md:text-[9px] font-bold text-blue-400 uppercase italic">
                                                                         Mat.
                                                                     </span>
@@ -865,7 +885,7 @@ export default function AsistenciaEstudiantes({
                                                                             existentesVarones
                                                                         }
                                                                     </span>
-                                                                </div>
+                                                                </div> */}
                                                             </div>
                                                         </td>
 
@@ -900,10 +920,13 @@ export default function AsistenciaEstudiantes({
                                                                                 .value,
                                                                         )
                                                                     }
-                                                                    className="w-16 md:w-20 py-2 md:py-3 bg-pink-50 border-2 border-pink-100 focus:border-pink-500 focus:bg-white rounded-xl md:rounded-2xl text-center text-base md:text-lg font-black text-pink-700 transition-all outline-none"
+                                                                    disabled={
+                                                                        mesBloqueado
+                                                                    } // 🔥 DESHABILITAR
+                                                                    className={`w-16 md:w-20 py-2 md:py-3 bg-blue-50 border-2 border-blue-100 focus:border-blue-500 focus:bg-white rounded-xl md:rounded-2xl text-center text-base md:text-lg font-black text-blue-700 transition-all outline-none ${mesBloqueado ? "opacity-60 cursor-not-allowed" : ""}`}
                                                                 />
                                                                 {/* Indicador a la derecha */}
-                                                                <div className="flex flex-col items-start leading-none">
+                                                                {/* <div className="flex flex-col items-start leading-none">
                                                                     <span className="text-[8px] md:text-[9px] font-bold text-pink-400 uppercase italic">
                                                                         Mat.
                                                                     </span>
@@ -912,7 +935,7 @@ export default function AsistenciaEstudiantes({
                                                                             existentesHembras
                                                                         }
                                                                     </span>
-                                                                </div>
+                                                                </div> */}
                                                             </div>
                                                         </td>
 
@@ -935,11 +958,11 @@ export default function AsistenciaEstudiantes({
                                                                                 ?.hembras,
                                                                         ) || 0)}
                                                                 </span>
-                                                                <span className="text-[8px] md:text-[9px] text-slate-400 uppercase font-bold italic">
+                                                                {/* <span className="text-[8px] md:text-[9px] text-slate-400 uppercase font-bold italic">
                                                                     de{" "}
                                                                     {existentesVarones +
                                                                         existentesHembras}
-                                                                </span>
+                                                                </span> */}
                                                             </div>
                                                         </td>
                                                     </tr>

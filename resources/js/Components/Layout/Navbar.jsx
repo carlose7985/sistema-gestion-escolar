@@ -34,8 +34,8 @@ export default function Navbar({ setIsMobileOpen }) {
     // Obtenemos los datos del usuario autenticado desde Laravel
 
     return (
-        <nav className="h-16 flex items-center justify-between px-6 lg:px-10 bg-[#06090f]/80 backdrop-blur-xl sticky top-0 z-40 border-b border-white/5">
-            <div className="flex items-center gap-4">
+        <nav className="h-16 flex items-center justify-between pr-2 bg-[#06090f]/80 backdrop-blur-xl sticky top-0 z-40 border-b border-white/5">
+            <div className="flex items-center ">
                 <div className="flex items-center gap-3">
                     {isMobile && (
                         <button

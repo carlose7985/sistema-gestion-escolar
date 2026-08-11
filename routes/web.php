@@ -31,6 +31,7 @@ use App\Http\Controllers\Estudiantes\Asistencias\AsistenciaEstudiantesController
 use App\Http\Controllers\Estudiantes\CentroDeImpreciones\ModuloDeImpresionesController;
 use App\Http\Controllers\Estudiantes\Estadisticas\EstadisticasController;
 use App\Http\Controllers\Estudiantes\EstudiantesCondicionales\ReportesEspecialesController;
+use App\Http\Controllers\Estudiantes\EstudiantesPorGrado\EstudiantesNoCeduladosController;
 use App\Http\Controllers\Estudiantes\EstudiantesPorGrado\EstudiantesPorGradoController;
 use App\Http\Controllers\Estudiantes\Fechas\FechaEntregaDocumentosController;
 use App\Http\Controllers\Estudiantes\Graduados\EstudiantesGraduadosController;
@@ -439,7 +440,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         //Rutas estudiantes condicionales
         Route::get('/condiciones/especiales', [ReportesEspecialesController::class, 'index'])->name('condiciones.especiales.index');
         Route::get('/condiciones/especiales/data', [ReportesEspecialesController::class, 'data'])->name('condiciones.especiales.data');
-    });
+
+        // 🔥 NUEVA RUTA: Estudiantes No Cedulados
+        Route::get('/no-cedulados', [EstudiantesNoCeduladosController::class, 'index'])->name('no.cedulados.index');
+        Route::get('/no-cedulados/data', [EstudiantesNoCeduladosController::class, 'data'])->name('no.cedulados.data');
+        Route::patch('/no-cedulados/update', [EstudiantesNoCeduladosController::class, 'updateCedulado'])->name('no.cedulados.update');
+        Route::get('/estudiantes/no-cedulados/pdf', [EstudiantesNoCeduladosController::class, 'exportPdf'])->name('no.cedulados.pdf');
+        });
 });
 
 // Rutas modulos generales de impresiones estudiantes

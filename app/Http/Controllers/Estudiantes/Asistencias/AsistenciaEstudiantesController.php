@@ -53,6 +53,7 @@ class AsistenciaEstudiantesController extends Controller
                 'mostrarModalConfiguracionInicial' => false,
                 'mesSugerido' => null,
                 'anioSugerido' => null,
+                'mesBloqueado' => false,
             ]);
         }
 
@@ -87,6 +88,7 @@ class AsistenciaEstudiantesController extends Controller
                 'isHoliday' => false,
                 'holidayDescription' => null,
                 'esPeriodoAnterior' => false,
+                'mesBloqueado' => false,
             ]);
         }
 
@@ -109,6 +111,14 @@ class AsistenciaEstudiantesController extends Controller
         $feriado = DiaFestivo::where('fecha', $selectedDateString)->first();
         $isHoliday = !is_null($feriado);
         $statusCierre = \App\Services\AsistenciaService::verificarCierreMesAnterior($fechaSeleccionada);
+
+        // ============================================================
+        // 🔥 NUEVO: VERIFICAR SI EL MES ESTÁ CERRADO EN cierres_mensuales
+        // ============================================================
+        $mes = $fechaSeleccionada->month;
+        $anio = $fechaSeleccionada->year;
+        $mesBloqueado = CierreHelper::mesCerrado($mes, $anio);
+        // ============================================================
 
         // 7. CONTEO DE ESTUDIANTES
         $grados = $this->obtenerGradosConConteoEstudiantes($periodoAsistencia->id);
@@ -137,6 +147,7 @@ class AsistenciaEstudiantesController extends Controller
             'periodoActivo' => $periodoAsistencia,
             'mesSugerido' => null,
             'anioSugerido' => null,
+            'mesBloqueado' => $mesBloqueado, // 🔥 NUEVA PROP
         ]);
     }
 
@@ -196,7 +207,7 @@ class AsistenciaEstudiantesController extends Controller
         }
         return $data;
     }
-    
+
     private function obtenerFechasFaltantes(string $selectedDateString): array
     {
         $missingDates = [];

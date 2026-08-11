@@ -88,7 +88,7 @@ export default function AuthenticatedLayout({ children }) {
             <div className="flex-1 flex flex-col min-w-0 lg:pl-64 transition-all duration-300">
                 <Navbar setIsMobileOpen={setIsMobileOpen} />
 
-                <main className="flex-1 overflow-y-auto bg-black relative">
+                <main className="flex-1 pl-2 pr-2 overflow-y-auto bg-black relative">
                     <Toaster
                         theme="dark"
                         position="top-right"
