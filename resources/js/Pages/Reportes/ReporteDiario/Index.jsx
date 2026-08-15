@@ -135,17 +135,6 @@ export default function WhatsAppReporte() {
                         </Button>
                     </Link>
                 }
-                actionFooter={
-                    <div className="flex items-center gap-3">
-                        <Icons.RefreshCw
-                            size={14}
-                            className={`text-emerald-500 ${loadingPreview ? "animate-spin" : ""}`}
-                        />
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
-                            WhatsApp Web Integration
-                        </span>
-                    </div>
-                }
             >
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full bg-[#f8fafc]">
                     {/* PANEL IZQUIERDO: CONFIGURACIÓN */}
@@ -153,7 +142,7 @@ export default function WhatsAppReporte() {
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="bg-white rounded-[3rem] border border-slate-100 shadow-2xl overflow-hidden"
+                            className="bg-white rounded-[1.5rem] border border-slate-100 shadow-2xl overflow-hidden"
                         >
                             <div className="bg-emerald-600 p-8 flex items-center gap-4 text-white relative overflow-hidden">
                                 <Icons.MessageSquare
@@ -264,12 +253,12 @@ export default function WhatsAppReporte() {
                     </div>
 
                     {/* PANEL DERECHO: SIMULADOR DE WHATSAPP */}
-                    <div className="flex items-center justify-center">
-                        <div className="relative bg-slate-900 rounded-[3.5rem] p-3 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border-[8px] border-slate-800 w-full max-w-sm">
+                    <div className="flex items-center justify-center lg:pl-10">
+                        <div className="relative bg-slate-900 rounded-[1.5rem] h-full p-3 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border-[8px] border-slate-800 w-full max-w-sm">
                             {/* Notch */}
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-slate-800 rounded-b-3xl z-20"></div>
 
-                            <div className="bg-[#e5ddd5] rounded-[2.8rem] overflow-hidden flex flex-col h-[450px] relative">
+                            <div className="bg-[#e5ddd5] rounded-[1.5rem] overflow-hidden flex flex-col h-full relative">
                                 {/* WhatsApp Header */}
                                 <div className="bg-[#075e54] pt-10 pb-4 px-6 flex items-center gap-4 shadow-lg relative z-10">
                                     <div className="w-10 h-10 rounded-full bg-slate-200 border-2 border-white/20 flex items-center justify-center shadow-inner">

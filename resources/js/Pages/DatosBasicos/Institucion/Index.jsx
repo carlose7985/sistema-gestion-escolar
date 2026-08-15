@@ -22,7 +22,10 @@ import {
     FileText,
     Hash,
     Map,
-    Save
+    Save,
+    AlertCircle,
+    CheckCircle2,
+    LogOut,
 } from "lucide-react";
 
 export default function Institucion({ institucion }) {

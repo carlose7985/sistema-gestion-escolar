@@ -3,7 +3,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
-//hola
+
 const buttonVariants = cva(
     "inline-flex items-center justify-center whitespace-nowrap text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 disabled:pointer-events-none disabled:opacity-50 gap-2",
     {

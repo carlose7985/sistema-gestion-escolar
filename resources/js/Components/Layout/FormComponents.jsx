@@ -7,24 +7,13 @@ import React, {
     useLayoutEffect,
 } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Check , X, Trash2 } from "lucide-react";
+import { ChevronDown, Check, X, Trash2 } from "lucide-react";
 import {
     buscarSugerencia,
     titleCaseFixed,
     aplicarMascara,
 } from "@/lib/formUtils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/Components/ui/select";
-/**
- * FIELD COMPONENT
- * Corregido: Se eliminó la autoselección y el salto del cursor.
- * Mantiene: IA de acentos, máscaras y validaciones.
- */
+
 export function Field({
     label,
     name,
@@ -51,7 +40,25 @@ export function Field({
     const [activeSuggestion, setActiveSuggestion] = useState(null);
     // Dentro de tu componente Field
     const [cursor, setCursor] = useState(null);
+    const fixRomanNumerals = (text) => {
+        if (!text) return text;
 
+        // Regex para identificar números romanos como palabras independientes
+        // Esta regex valida la estructura estándar (I, II, IV, VIII, IX, etc.)
+        const romanRegex =
+            /\b(m*(cm|cd|d?c{0,3})(xc|xl|l?x{0,3})(ix|iv|v?i{0,3}))\b/gi;
+
+        return text.replace(romanRegex, (match) => {
+            // Solo transformamos si tiene contenido (evita strings vacíos en los grupos de captura)
+            if (match.length === 0) return match;
+
+            // Excepción opcional: evitar que palabras comunes de una sola letra se vuelvan romanas
+            // por ejemplo la "a" o "y" no son romanas, pero "i" y "v" sí.
+            // Si quieres que "i" (como en inglés) no se capitalice, podrías filtrar aquí.
+
+            return match.toUpperCase();
+        });
+    };
     // Usa esto para restaurar la posición después de que el valor se actualice
     useLayoutEffect(() => {
         if (cursor !== null && ref.current) {
@@ -100,39 +107,49 @@ export function Field({
         setActiveSuggestion(null);
     };
 
-    const handleInternalChange = (e) => {
-        if (!onChange) return;
+   const handleInternalChange = (e) => {
+       if (!onChange) return;
 
-        const input = e.target;
-        const oldVal = value || "";
-        const selectionStart = input.selectionStart;
+       const input = e.target;
+       const oldVal = value || "";
+       const selectionStart = input.selectionStart;
 
-        let val = input.value;
-        let newCursor = selectionStart;
+       let val = input.value;
+       let newCursor = selectionStart;
 
-        // 1. Aplicar máscara
-        if (mask) {
-            const valLimpio = val.replace(/\D/g, "");
-            val = aplicarMascara(val, mask);
-            const diff = val.length - oldVal.length;
-            if (diff > 0) {
-                newCursor += diff;
-            }
-        }
-        // 2. Aplicar transformaciones de texto
-        else {
-            const isTech = ["email"].includes(name);
-            if (type === "text" && !isTech) {
-                if (upperCase) val = val.toUpperCase();
-                else if (autoTitleCase) val = titleCaseFixed(val);
-                else if (autoSentenceCase && val.length > 0)
-                    val = val[0].toUpperCase() + val.slice(1);
-            }
-        }
+       // 1. Aplicar máscara
+       if (mask) {
+           const valLimpio = val.replace(/\D/g, "");
+           val = aplicarMascara(val, mask);
+           const diff = val.length - oldVal.length;
+           if (diff > 0) {
+               newCursor += diff;
+           }
+       }
+       // 2. Aplicar transformaciones de texto
+       else {
+           const isTech = ["email"].includes(name);
+           if (type === "text" && !isTech) {
+               // Aplicamos transformaciones base
+               if (upperCase) {
+                   val = val.toUpperCase();
+               } else {
+                   if (autoTitleCase) {
+                       val = titleCaseFixed(val);
+                   } else if (autoSentenceCase && val.length > 0) {
+                       val = val[0].toUpperCase() + val.slice(1);
+                   }
 
-        setCursor(newCursor);
-        onChange({ target: { name, value: val } });
-    };
+                   // --- NUEVA LÓGICA PARA NÚMEROS ROMANOS ---
+                   // Se aplica después de TitleCase para corregir cosas como "Ii" -> "II"
+                   val = fixRomanNumerals(val);
+               }
+           }
+       }
+
+       setCursor(newCursor);
+       onChange({ target: { name, value: val } });
+   };
 
     // --- MANEJADOR DE FOCO SIN PARPADEO ---
     const handleFocus = (e) => {
@@ -252,7 +269,6 @@ export function Field({
                     spellCheck="false"
                     autoComplete="off"
                     placeholder={placeholder}
-                  
                     className={`relative placeholder:text-slate-400
                     placeholder:font-medium
                     placeholder:italic z-10 w-full bg-transparent border rounded-xl ${icon ? "pl-9" : "px-3"} py-2.5 text-xs font-bold text-slate-700 outline-none transition-all ${localError ? "border-rose-500 focus:ring-2 focus:ring-rose-500/10" : "border-gray-400 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500"} ${disabled ? "opacity-60 cursor-not-allowed bg-gray-100" : ""}`}

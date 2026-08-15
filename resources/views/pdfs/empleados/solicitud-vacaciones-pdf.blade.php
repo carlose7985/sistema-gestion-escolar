@@ -6,106 +6,133 @@
     <title>{{ $title }}</title>
     <style>
         @page {
-            margin: 1.5cm 2.0cm 1.5cm 2.0cm;
+            margin: 0.5cm 2.0cm 0.5cm 2.0cm;
         }
 
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            /* Fuente con serifa para que se parezca a la de la imagen (tipo Word) */
+            font-family: 'Times New Roman', Times, serif;
             font-size: 12pt;
-            line-height: 1.6;
+            line-height: 1.5;
+            color: #000;
         }
 
         .fecha {
-            text-align: right;
-            margin-bottom: 20px;
+            text-align: left;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 15px;
         }
 
         .destinatario {
             margin-bottom: 20px;
         }
 
+        .linea-completa {
+            border-bottom: 1px solid black;
+            width: 80%;
+            margin-bottom: 5px;
+            height: 12px;
+        }
+
         .asunto {
+            text-align: center;
             font-weight: bold;
-            text-decoration: underline;
-            margin-bottom: 20px;
+            margin: 30px 0;
         }
 
         .contenido {
             text-align: justify;
-            margin-bottom: 20px;
         }
 
-        .despedida {
-            margin-top: 30px;
+        .contenido p {
+            margin-bottom: 15px;
         }
 
-        .firma {
-            margin-top: 2px;
+        .atentamente {
+            text-align: center;
+            margin-top: 40px;
+            margin-bottom: 60px;
+        }
+
+        .firma-seccion {
             text-align: center;
         }
 
-        .datos-personales {
-            margin-top: 10px;
-            text-align: center;
+        .linea-firma {
+            border-top: 1px solid #888;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .bold {
+            font-weight: bold;
         }
     </style>
-
 </head>
 
 <body>
-
-    <!-- @include('partials.header', ['section_title' => $title]) -->
+    <table class="header-table">
+        <tr>
+            <td style="text-align: left; border: none;">
+                <img src="{{ $logoDocumento }}" style="height: 50px; width: 600px;" alt="Logo Doc">
+            </td>
+        </tr>
+    </table>
 
     <div class="fecha">
-        <strong>Tucupita, {{ date('d') }} de
-            @php
-            $meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-            @endphp
-            {{ $meses[date('n')-1] }} de {{ date('Y') }}</strong>
+        Tucupita,
+        @php
+        $meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        $mes_actual = $meses[date('n')-1];
+        @endphp
+        {{ $mes_actual }} del {{ date('Y') }}
     </div>
 
     <div class="destinatario">
-        <strong>Ciudadana:</strong><br>
-        <strong>MSc. Profe. Cruz Torres</strong><br>
-        <strong>Directora de Escuela Carlos Rafael Contreras.</strong>
+        <span class="bold">Ciudadano:</span>
+        <div class="linea-completa"></div>
+        <span class="bold">Director del CDCEE Delta Amacuro Presente.</span>
+        <br><br>
+        <span class="bold">Atención:</span>
+        <div class="linea-completa"></div>
+        <span class="bold">Coordinadora de Gestión Humana</span>
     </div>
 
     <div class="asunto">
-        <strong>Asunto: Solicitud de disfrute de vacaciones reglamentarias.</strong>
+        Asunto: Remisión de Permiso Vacacional.
     </div>
 
     <div class="contenido">
-        <p>Reciba un cordial y respetuoso saludo, extendido a todo el personal que dignamente dirige.</p>
+        <p>Reciba un saludo institucional, bolivariano y revolucionario.</p>
 
-        <p>La presente tiene como finalidad dirigirme a su despacho a fines de solicitar formalmente el disfrute del período vacacional correspondiente al año en curso, derecho que hasta la fecha no he gozado de acuerdo con el cronograma de actividades de la institución Escuela Carlos Rafael Contreras.</p>
+        <p>La presente tiene como finalidad hacer de su conocimiento y tramitar formalmente el permiso correspondiente al disfrute de vacaciones del ciudadano
+             <span class="bold">{{ $empleado->nombres }} {{ $empleado->apellidos }}</span>,
+              CI: <span class="bold">{{ $empleado->documento }}{{ $empleado->cedula }}</span>
+               quien se desempeña como <span class="bold">{{ $empleado->funcion_en_el_plantel }}</span>
+                en la siguiente institución, <span class="bold">{{$institucion->nombre_de_la_institucion}}</span>.</p>
 
-        @php
-        $genero = $empleado->sexo == 'M' ? 'el' : 'la';
-        $ciudadano = $empleado->sexo == 'M' ? 'el ciudadano' : 'la ciudadana';
-        $desempeno = $empleado->sexo == 'M' ? 'desempeño' : 'desempeñé';
-        @endphp
+        <p>Dicho período de descanso legal ha sido autorizado por esta dirección, desde el:_____/______/______</p>
 
-        <p>En la cual me {{ $desempeno }} en el cargo de <strong>{{ $empleado->cargo }}</strong>, cumpliendo con las responsabilidades inherentes al resguardo de la planta física y bienes del Estado. En este sentido, y en apego a la normativa legal vigente que rige la materia laboral y administrativa del personal del Ministerio del Poder Popular para la Educación, solicito sea gestionado mi permiso vacacional para el descanso necesario y la renovación de mis facultades físicas y mentales.</p>
+        <p>Es importante destacar que esta solicitud se realiza en cumplimiento de los derechos laborales del trabajador y en concordancia con la planificación administrativa de este plantel, garantizando que las funciones de resguardo y vigilancia queden debidamente cubiertas durante su ausencia.</p>
 
-        <p>El inicio para el disfrute de vacaciones está contemplada desde la siguiente fecha:_________________</p>
-
+        <p>Sin más a que hacer referencia, agradeciendo de antemano su atención y la gestión correspondiente ante el departamento que usted dirige.</p>
     </div>
 
-    <div class="despedida">
-        <p>Sin más a que hacer referencia y en espera de una respuesta favorable a la presente solicitud, queda de usted.</p>
+    <div class="atentamente">
+        Atentamente,
     </div>
 
-    <div class="firma">
-        <p><strong>Atentamente,</strong></p>
-        <br>
-        <p><strong>________________________________________</strong></p>
-        <p><strong>{{ $empleado->nombres }} {{ $empleado->apellidos }}</strong></p>
-        <p><strong>C.I.: {{ $empleado->documento }}{{ $empleado->cedula }}</strong></p>
+    <div class="firma-seccion">
+        <div class="linea-firma"></div>
+        @if ($director)
+        <span class="bold">{{ $director->nombre_y_apellido }}</span><br>
+        <span class="bold">C.I. {{ $director->cedula }}</span>
+        @else
+
+        @endif
+
     </div>
-
-    <!-- @include('partials.data_fecha') -->
-
-    <!-- @include('partials.footer_2') -->
 
 </body>
 

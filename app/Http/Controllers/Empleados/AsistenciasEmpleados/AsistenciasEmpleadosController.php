@@ -7,6 +7,7 @@ use App\Models\AsistenciaEmpleado;
 use App\Models\Cargo;
 use App\Models\DiaFestivo;
 use App\Models\EmpleadoActivo;
+use App\Models\Permiso;
 use App\Models\TotalEmpleado;
 use App\Models\VigilanteGuardia;
 use Carbon\Carbon;
@@ -32,7 +33,7 @@ class AsistenciasEmpleadosController extends Controller
 
         // 1. Preparar Fechas
         $selectedDate = $request->input('fecha') ? Carbon::parse($request->input('fecha')) : Carbon::today();
-        
+
         $fechaFormateada = ucfirst($selectedDate->isoFormat('dddd D [de] MMMM'));
 
         // 2. Verificar estatus del día
@@ -58,7 +59,7 @@ class AsistenciasEmpleadosController extends Controller
             'puedeRegistrarVigilante' => $puedeRegistrarVigilante,
         ]);
     }
-   
+
     public function create(Request $request)
     {
 
@@ -295,7 +296,7 @@ class AsistenciasEmpleadosController extends Controller
             ->get();
     }
 
-  
+
 
     private function obtenerStatusSegunSituacion($situacion)
     {
@@ -392,7 +393,7 @@ class AsistenciasEmpleadosController extends Controller
             ]
         );
     }
-   
+
     private function verificarDiasSaltados(string $nombreCargo, string $inicioStr, string $finStr, array $diasFestivos, Carbon $fechaVisual)
     {
         $fechaInicio = Carbon::parse($inicioStr);
@@ -666,7 +667,7 @@ class AsistenciasEmpleadosController extends Controller
         $fechaActual = now()->format('Y-m-d');
 
         // Buscamos vacaciones en la tabla única
-        $vacacionesVencidas = \App\Models\Permiso::where('tipo', 'Vacacion')
+        $vacacionesVencidas = Permiso::where('tipo', 'Vacacion')
             ->where('status', 'Activo')
             ->whereDate('fecha_final', '<', $fechaActual)
             ->get();
@@ -691,7 +692,7 @@ class AsistenciasEmpleadosController extends Controller
         $fechaActual = now()->format('Y-m-d');
 
         // Buscamos permisos eventuales en la tabla única
-        $permisosVencidos = \App\Models\Permiso::with('empleado')
+        $permisosVencidos = Permiso::with('empleado')
             ->where('tipo', 'Eventual')
             ->where('status', 'Activo')
             ->whereDate('fecha_final', '<', $fechaActual)

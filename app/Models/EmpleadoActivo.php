@@ -100,26 +100,16 @@ class EmpleadoActivo extends Model
         return $this->hasMany(AsistenciaEmpleado::class, 'empleado_id');
     }
 
-
+    public function vigilanteGuardia()
+    {
+        // Un empleado tiene una configuración de guardia
+        return $this->hasOne(VigilanteGuardia::class, 'empleado_id');
+    }
+    
     public function permisos()
     {
         return $this->hasMany(Permiso::class, 'empleado_id');
     }
-
-
-    public function permisosEventual()
-    {
-        return $this->hasMany(PermisoEventual::class, 'empleado_id');
-    }
-    public function permisosVacacion()
-    {
-        return $this->hasMany(PermisoVacacion::class, 'empleado_id');
-    }
-    public function permisosPermanente()
-    {
-        return $this->hasMany(PermisoPermanente::class, 'empleado_id');
-    }
-
    
     /* --- CONFIGURACIÓN JSON --- */
     public function toJson($options = 0)
