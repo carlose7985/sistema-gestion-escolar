@@ -52,8 +52,8 @@ export default function Login({ status, canResetPassword }) {
                         transition={{ delay: 0.5 }}
                         className="mb-6 flex w-fit items-center gap-2 rounded-full bg-blue-500/20 px-4 py-1.5 text-xs font-black uppercase tracking-widest backdrop-blur-md border border-white/10"
                     >
-                        <Icons.BookOpen className="h-4 w-4 text-blue-400" /> Educación
-                        de Excelencia
+                        <Icons.BookOpen className="h-4 w-4 text-blue-400" />{" "}
+                        Educación de Excelencia
                     </motion.div>
 
                     <motion.blockquote
@@ -74,15 +74,15 @@ export default function Login({ status, canResetPassword }) {
             </div>
 
             {/* --- SECCIÓN DERECHA: FORMULARIO --- */}
-            <div className="flex flex-col justify-center px-8 py-12 md:px-12 lg:px-16 xl:px-24 bg-gray-50">
+            <div className="flex flex-col justify-center items-center px-8 py-12 md:px-12 lg:px-16 xl:px-24 min-h-screen bg-gradient-to-br from-blue-300 via-green-200 to-red-200">
                 <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     className="mx-auto w-full max-w-md space-y-10"
                 >
-                    {/* Header del Formulario */}
-                    <div className="text-center lg:text-left">
-                        <div className="mb-6 flex justify-center lg:justify-start">
+                    {/* Header del Formulario - Texto centrado */}
+                    <div className="text-center">
+                        <div className="mb-6 flex justify-center">
                             <div className="flex items-center justify-center rounded-2xl bg-blue-600 p-3 text-white shadow-xl shadow-blue-200">
                                 <Icons.School className="h-8 w-8" />
                             </div>
@@ -97,7 +97,7 @@ export default function Login({ status, canResetPassword }) {
                     </div>
 
                     {status && (
-                        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-black text-emerald-600 uppercase">
+                        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-black text-emerald-600 uppercase text-center">
                             {status}
                         </div>
                     )}
@@ -177,8 +177,9 @@ export default function Login({ status, canResetPassword }) {
                                 className="w-full h-14 text-sm font-black uppercase tracking-[0.2em] shadow-2xl shadow-blue-200 mt-4 rounded-2xl transition-all hover:scale-[1.02]"
                                 loading={processing}
                             >
-                                <span className="flex items-center gap-2">
-                                    Entrar al Portal <Icons.ArrowRight size={18} />
+                                <span className="flex items-center justify-center gap-2">
+                                    Entrar al Portal{" "}
+                                    <Icons.ArrowRight size={18} />
                                 </span>
                             </Button>
                         </div>

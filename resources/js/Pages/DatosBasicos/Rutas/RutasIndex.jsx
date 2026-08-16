@@ -1,27 +1,11 @@
-"use client";
+
+
 import React from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import ViewContainer from "@/Components/Layout/ViewContainer";
 import { motion } from "framer-motion";
-import {
-    Building2,
-    GraduationCap,
-    Briefcase,
-    Image as ImageIcon,
-    CalendarDays,
-    Zap,
-} from "lucide-react";
+import * as Icons from "lucide-react";
 import { Link, Head } from "@inertiajs/react";
-
-// Mapeo optimizado para no perder rendimiento pero mantener los iconos
-const ICON_MAP = {
-    Building2: Building2,
-    GraduationCap: GraduationCap,
-    Briefcase: Briefcase,
-    Image: ImageIcon,
-    CalendarDays: CalendarDays,
-    Zap: Zap,
-};
 
 const modules = [
     {
@@ -30,7 +14,7 @@ const modules = [
         icon: "Building2",
         color: "cyan",
         route: "settings.institucion.index",
-        items: ["Nombre Oficial", "Rif / Nif / Registros", "Direcciones"],
+        items: ["Nombre Oficial"],
     },
     {
         title: "GRADOS",
@@ -38,7 +22,15 @@ const modules = [
         icon: "GraduationCap",
         color: "fuchsia",
         route: "settings.grados.index",
-        items: ["Niveles", "Secciones", "Aulas"],
+        items: ["Niveles, Secciones"],
+    },
+    {
+        title: "Niveles",
+        subtitle: "Estructura Sub-Académica",
+        icon: "Users",
+        color: "emerald",
+        route: "settings.institucion.niveles",
+        items: ["Subniveles"],
     },
     {
         title: "ÁREAS DE TRABAJO",
@@ -46,7 +38,7 @@ const modules = [
         icon: "Briefcase",
         color: "lime",
         route: "settings.areas.index",
-        items: ["Departamentos", "Coordinaciones", "Oficinas"],
+        items: ["Departamentos, Coordinaciones"],
     },
     {
         title: "MULTIMEDIA",
@@ -54,7 +46,7 @@ const modules = [
         icon: "Image",
         color: "rose",
         route: "settings.logos.index",
-        items: ["Logos", "Sellos", "Firmas Digitales"],
+        items: ["Logos, Sellos Firmas Digitales"],
     },
     {
         title: "DÍAS FESTIVOS",
@@ -62,7 +54,7 @@ const modules = [
         icon: "CalendarDays",
         color: "orange",
         route: "settings.festivos.index",
-        items: ["Feriados", "Eventos", "Cierres de Año"],
+        items: ["Feriados, Eventos Cierres de Año"],
     },
     {
         title: "APRECIACIONES",
@@ -70,10 +62,20 @@ const modules = [
         icon: "Zap",
         color: "green",
         route: "settings.apreciaciones.index",
-        items: ["Calificar", "Gestor", "Edicion"],
+        items: ["Calificar, Gestor Edicion"],
+    },
+
+    {
+        title: "Inmuebles",
+        subtitle: "Inventario",
+        icon: "BarChart3",
+        color: "rose",
+        route: "settings.institucion.inmuebles.index",
+        items: ["Inventario general"],
     },
 ];
 
+// Definir estilos completos para cada color
 const neonStyles = {
     cyan: {
         border: "border-cyan-500",
@@ -83,7 +85,41 @@ const neonStyles = {
         hoverShadow: "hover:shadow-cyan-500/40",
         from: "from-cyan-500/10",
         to: "to-cyan-500/20",
+        bgLight: "bg-cyan-50/30",
         buttonHover: "group-hover:bg-cyan-500",
+    },
+    emerald: {
+        border: "border-emerald-500",
+        shadow: "shadow-emerald-500/20",
+        text: "text-emerald-500",
+        bg: "bg-emerald-500",
+        hoverShadow: "hover:shadow-emerald-500/40",
+        from: "from-emerald-500/10",
+        to: "to-emerald-500/20",
+        bgLight: "bg-emerald-50/30",
+        buttonHover: "group-hover:bg-emerald-500",
+    },
+    orange: {
+        border: "border-orange-500",
+        shadow: "shadow-orange-500/20",
+        text: "text-orange-500",
+        bg: "bg-orange-500",
+        hoverShadow: "hover:shadow-orange-500/40",
+        from: "from-orange-500/10",
+        to: "to-orange-500/20",
+        bgLight: "bg-orange-50/30",
+        buttonHover: "group-hover:bg-orange-500",
+    },
+    red: {
+        border: "border-red-500",
+        shadow: "shadow-red-500/20",
+        text: "text-red-500",
+        bg: "bg-red-500",
+        hoverShadow: "hover:shadow-red-500/40",
+        from: "from-red-500/10",
+        to: "to-red-500/20",
+        bgLight: "bg-red-50/30",
+        buttonHover: "group-hover:bg-red-500",
     },
     fuchsia: {
         border: "border-fuchsia-500",
@@ -93,6 +129,7 @@ const neonStyles = {
         hoverShadow: "hover:shadow-fuchsia-500/40",
         from: "from-fuchsia-500/10",
         to: "to-fuchsia-500/20",
+        bgLight: "bg-fuchsia-50/30",
         buttonHover: "group-hover:bg-fuchsia-500",
     },
     lime: {
@@ -103,6 +140,7 @@ const neonStyles = {
         hoverShadow: "hover:shadow-lime-500/40",
         from: "from-lime-500/10",
         to: "to-lime-500/20",
+        bgLight: "bg-lime-50/30",
         buttonHover: "group-hover:bg-lime-500",
     },
     rose: {
@@ -113,99 +151,91 @@ const neonStyles = {
         hoverShadow: "hover:shadow-rose-500/40",
         from: "from-rose-500/10",
         to: "to-rose-500/20",
+        bgLight: "bg-rose-50/30",
         buttonHover: "group-hover:bg-rose-500",
     },
-    orange: {
-        border: "border-orange-500",
-        shadow: "shadow-orange-500/20",
-        text: "text-orange-500",
-        bg: "bg-orange-500",
-        hoverShadow: "hover:shadow-orange-500/40",
-        from: "from-orange-500/10",
-        to: "to-orange-500/20",
-        buttonHover: "group-hover:bg-orange-500",
-    },
-
-    green: {
-        border: "border-green-500",
-        shadow: "shadow-green-500/20",
-        text: "text-green-500",
-        bg: "bg-green-500",
-        hoverShadow: "hover:shadow-green-500/40",
-        from: "from-green-500/10",
-        to: "to-green-500/20",
-        buttonHover: "group-hover:bg-green-500",
+    blue: {
+        border: "border-blue-500",
+        shadow: "shadow-blue-500/20",
+        text: "text-blue-500",
+        bg: "bg-blue-500",
+        hoverShadow: "hover:shadow-blue-500/40",
+        from: "from-blue-500/10",
+        to: "to-blue-500/20",
+        bgLight: "bg-blue-50/30",
+        buttonHover: "group-hover:bg-blue-500",
     },
 };
 
 export default function Index() {
     return (
         <AuthenticatedLayout>
-            <Head title="Configuraciones Básicas" />
+            <Head title="Empleados" />
 
             <ViewContainer
-                title="DATOS BÁSICOS"
-                subtitle="Configuración y control los datos generales"
-                icon="Settings"
+                title="Datos Básicos"
+                subtitle="Configuraciones y control de acciones"
+                icon="Cog"
                 showSearch={false}
             >
-                {/* 
-                    AJUSTE DE GRID: Mantenemos el responsive pero aseguramos 
-                    que en XL sean 5 para que se vea como en tu diseño original 
-                */}
-                <div className="p-1 md:p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 xl:grid-cols-6 gap-2">
+                <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 h-full max-h-[650px]">
                     {modules.map((mod, idx) => {
-                        const IconComponent = ICON_MAP[mod.icon];
-                        const style = neonStyles[mod.color];
+                        const IconComponent = Icons[mod.icon];
+                        const style = neonStyles[mod.color] || neonStyles.blue;
+
+                        if (!IconComponent) {
+                            console.warn(`Icono "${mod.icon}" no encontrado`);
+                            return null;
+                        }
 
                         return (
                             <Link
                                 key={idx}
                                 href={route(mod.route)}
-                                className="group flex"
+                                className="group h-full"
                             >
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{
-                                        delay: idx * 0.1,
+                                        delay: idx * 0.05,
                                         type: "spring",
                                         stiffness: 100,
                                     }}
-                                    whileHover={{ y: -12 }}
-                                    className={`relative flex-1 flex flex-col bg-white border-b-[6px] ${style.border} rounded-[2.5rem] p-7 shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer active:scale-95`}
+                                    whileHover={{ y: -8 }}
+                                    className={`relative h-full flex flex-col items-center justify-center bg-white border-b-[4px] ${style.border} rounded-2xl p-4 shadow-xl transition-all duration-300 overflow-hidden cursor-pointer active:scale-95`}
                                 >
-                                    {/* Resplandor de fondo al hacer hover (RESTAURADO) */}
+                                    {/* Resplandor de fondo al hacer hover */}
                                     <div
-                                        className={`absolute inset-0 bg-gradient-to-b ${style.from} ${style.to} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
+                                        className={`absolute inset-0 bg-gradient-to-b ${style.from} ${style.to} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
                                     />
 
-                                    {/* Icono Flotante Neón (RESTAURADO) */}
-                                    <div className="flex justify-center mb-8 relative z-10">
+                                    {/* Icono */}
+                                    <div className="relative z-10 mb-2">
                                         <div
-                                            className={`p-5 rounded-3xl text-white shadow-2xl transition-all duration-500 ${style.bg} ${style.shadow} group-hover:${style.hoverShadow} group-hover:scale-110`}
+                                            className={`p-3 rounded-2xl text-white shadow-lg ${style.bg} ${style.shadow} ${style.hoverShadow}`}
                                         >
                                             <IconComponent
-                                                size={34}
+                                                size={28}
                                                 strokeWidth={2}
                                             />
                                         </div>
                                     </div>
 
-                                    {/* Textos Centrales (RESTAURADO) */}
-                                    <div className="text-center mb-6 relative z-10">
-                                        <h3 className="text-sm font-black text-gray-800 tracking-tighter uppercase italic group-hover:text-black transition-colors">
+                                    {/* Textos */}
+                                    <div className="text-center relative z-10">
+                                        <h3 className="text-[14px] font-black text-gray-800 tracking-tighter uppercase group-hover:text-black transition-colors">
                                             {mod.title}
                                         </h3>
                                         <p
-                                            className={`text-[9px] font-black uppercase tracking-[0.2em] mt-1.5 ${style.text}`}
+                                            className={`text-[8px] font-black uppercase tracking-[0.2em] mt-0.5 ${style.text}`}
                                         >
                                             {mod.subtitle}
                                         </p>
                                     </div>
 
-                                    {/* Lista de Items / Pildoras (RESTAURADO) */}
-                                    <div className="flex-1 space-y-2.5 mb-10 relative z-10">
+                                    {/* Items */}
+                                    <div className="flex-1 space-y-2.5 mt-6 relative z-10">
                                         {mod.items.map((item, i) => (
                                             <div
                                                 key={i}
@@ -216,20 +246,22 @@ export default function Index() {
                                         ))}
                                     </div>
 
-                                    {/* Botón Inferior (RESTAURADO) */}
+                                    {/* Botón */}
                                     <div
-                                        className={`w-full py-4 rounded-2xl text-[10px] font-black uppercase italic tracking-[0.2em] flex items-center justify-center gap-2 transition-all duration-500 bg-gray-900 text-white ${style.buttonHover} group-hover:shadow-lg group-hover:scale-105`}
+                                        className={`relative z-10 mt-3 w-full py-2.5 rounded-xl text-[8px] font-black uppercase italic tracking-[0.2em] flex items-center justify-center gap-1.5 transition-all duration-300 
+                                            bg-gray-900 text-white ${style.buttonHover} group-hover:shadow-lg group-hover:scale-105`}
                                     >
-                                        ENTRAR{" "}
-                                        <Zap
-                                            size={14}
+                                        ENTRAR
+                                        <Icons.Zap
+                                            size={12}
                                             className="fill-current"
                                         />
                                     </div>
 
-                                    {/* Adorno visual de luz esquina (RESTAURADO) */}
+                                    {/* Adorno visual de luz */}
                                     <div
-                                        className={`absolute -bottom-4 -right-4 w-20 h-20 rounded-full blur-2xl transition-all opacity-50 ${style.bg} group-hover:opacity-100`}
+                                        className={`absolute -bottom-4 -right-4 w-16 h-16 rounded-full blur-2xl transition-all 
+                                            bg-gradient-to-b ${style.from} ${style.to} opacity-0 group-hover:opacity-100`}
                                     />
                                 </motion.div>
                             </Link>

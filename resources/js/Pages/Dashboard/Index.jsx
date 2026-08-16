@@ -12,22 +12,14 @@ import {
     LucidePieChart,
     LucideClock,
     LucideTrendingUp,
-    LucideQrCode,
     LucideUtensils,
-    LucidePackage,
-    LucideHistory,
     LucideFileSpreadsheet,
     LucideSettings,
-    LucideHelpCircle,
-    LucideBell,
     LucideCalendar,
     LucideHome,
-    LucideBarChart3,
-    LucideClipboardList,
     LucideChevronRight,
     LucideHouse,
 } from "lucide-react";
-import { Button } from "@/Components/ui/Button";
 
 export default function Dashboard({
     periodoEscolar = "N/A",
@@ -35,7 +27,6 @@ export default function Dashboard({
     retiredStudentsCount = 0,
     newStudentsCount = 0,
     matriculaInicial = 0,
-    periodoStatus = "Cerrado",
     reporteGlobal = {
         hayReporte: false,
         estudiantes: { total: 0, varones: 0, hembras: 0 },
@@ -148,6 +139,7 @@ export default function Dashboard({
             <Head title="Dashboard" />
             <ViewContainer
                 title="DASHBOARD"
+                icon="Home"
                 subtitle="Resumen ejecutivo y control de asistencia"
                 showSearch={false}
             >

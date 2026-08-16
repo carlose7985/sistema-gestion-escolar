@@ -478,6 +478,7 @@ export function MultiSelectField({
  */
 export function SelectField({
     label,
+    name, // 🔥 Añadir name como prop
     value,
     onChange,
     optionSelecName,
@@ -503,9 +504,10 @@ export function SelectField({
             document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const selectedOption = options.find(
-        (opt) => (typeof opt === "object" ? opt.v : opt) == value,
-    );
+    const selectedOption = options.find((opt) => {
+        const v = typeof opt === "object" ? opt.v : opt;
+        return v == value;
+    });
 
     const displayLabel = selectedOption
         ? typeof selectedOption === "object"
@@ -514,7 +516,17 @@ export function SelectField({
         : optionSelecName || "Seleccione...";
 
     const handleSelect = (val) => {
-        onChange({ target: { value: val } });
+        // 🔥 Crear un evento sintético completo
+        const syntheticEvent = {
+            target: {
+                name: name,
+                value: val,
+            },
+        };
+
+        if (onChange) {
+            onChange(syntheticEvent);
+        }
         setIsOpen(false);
     };
 
@@ -552,7 +564,6 @@ export function SelectField({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.15 }}
-                        /* p-1.5: Es el espacio entre las opciones y el borde del cuadro blanco */
                         className="absolute left-0 right-0 z-[9999] bg-gray-200 border border-slate-200 mt-14 p-1.5 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.12)] max-h-60 overflow-y-auto"
                         style={{ top: "0px" }}
                     >
@@ -568,7 +579,6 @@ export function SelectField({
                                     className={`
                                         flex items-center justify-between
                                         px-4 py-2.5 text-xs font-bold cursor-pointer transition-all
-                                        /* rounded-lg: Hace que el color de hover/seleccion sea redondeado y no toque los bordes */
                                         rounded-sm mb-1 last:mb-0
                                         ${
                                             isSelected

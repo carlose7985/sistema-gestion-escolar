@@ -53,15 +53,6 @@ use App\Http\Controllers\ExportDocumentos\ExportDocEstudiantesController;
 use App\Http\Controllers\ExportDocumentos\ExportDocEstudiantesInactivosController;
 use App\Http\Controllers\GlobalesSearchAndQuist\GlobalSearchController;
 use App\Http\Controllers\GlobalesSearchAndQuist\QuickStatsController;
-use App\Http\Controllers\ModulosIndex\DatosBasicos\ModuloDatosBasicosController;
-use App\Http\Controllers\ModulosIndex\Empleados\ModuloEmpleadosAccionesController;
-use App\Http\Controllers\ModulosIndex\Empleados\ModuloEmpleadosActivosController;
-use App\Http\Controllers\ModulosIndex\Empleados\ModuloEmpleadosInactivosController;
-use App\Http\Controllers\ModulosIndex\Estudiantes\ModuloEstudiantesAccionesController;
-use App\Http\Controllers\ModulosIndex\Estudiantes\ModuloEstudiantesActivosController;
-use App\Http\Controllers\ModulosIndex\Estudiantes\ModuloEstudiantesImpresionesController;
-use App\Http\Controllers\ModulosIndex\Estudiantes\ModuloEstudiantesInactivosController;
-use App\Http\Controllers\ModulosIndex\Estudiantes\ModuloEstudiantesRegistroController;
 use App\Http\Controllers\ModulosIndex\ReporteAsistencias\ModuloReporteAsistenciaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportesAsistencia\ReporteAsistenciasExcellMensualesController;
@@ -88,8 +79,11 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::middleware(['auth', 'verified'])->group(function () {
     // Grupo de Datos Básicos
     Route::prefix('datos-basicos')->name('settings.')->group(function () {
-        // Rutas del Modulo Index
-        Route::get('/', [ModuloDatosBasicosController::class, 'index'])->name('index');
+        // Rutas Index
+        Route::get('/', function () {
+            return Inertia::render('DatosBasicos/Rutas/RutasIndex');
+        })->name('index');
+
         // Rutas de Institución
         Route::get('/institucion', [InstitucionController::class, 'index'])->name('institucion.index');
         Route::post('/institucion', [InstitucionController::class, 'store'])->name('institucion.store');
@@ -131,8 +125,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Grupo Recursos
     Route::prefix('reportes-asistencias')->name('recursos.')->group(function () {
         // Ruta del Modulo Index
-        Route::get('/', [ModuloReporteAsistenciaController::class, 'index'])->name('index');
-
+        // Rutas index
+        Route::get('/', function () {
+            return Inertia::render('RutasAsistenciasReportes/Index');
+        })->name('index');
         // Rutas de Asistencia Empleados
         Route::get('/asistencia/empleados', [AsistenciasEmpleadosController::class, 'index'])->name('asistencia.empleados.index');
         Route::get('/asistencia/empleados/create', [AsistenciasEmpleadosController::class, 'create'])->name('asistencia.empleados.create');
@@ -168,8 +164,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     // Grupo empleados activos
     Route::prefix('empleados-activos')->name('empleados.activos.')->group(function () {
-        // Rutas modulo index
-        Route::get('/', [ModuloEmpleadosActivosController::class, 'index'])->name('index');
+        // Rutas index
+        Route::get('/', function () {
+            return Inertia::render('Empleados/Rutas/RutasActivosIndex');
+        })->name('index');    
+        
         // Rutas cartas de aceptacion
         Route::get('/carta/aceptacion', [CartaAceptacionController::class, 'index'])->name('carta.aceptacion.index');
         Route::post('/carta/aceptacion', [CartaAceptacionController::class, 'store'])->name('carta.aceptacion.store');
@@ -200,9 +199,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Grupo Permisos
     Route::prefix('empleados-inactivos')->name('empleados.inactivos.')->group(function () {
 
-        // Rutas modulo index
-        Route::get('/', [ModuloEmpleadosInactivosController::class, 'index'])->name('index');
-
+        // Rutas index
+        Route::get('/', function () {
+            return Inertia::render('Empleados/Rutas/RutasInactivosIndex');
+        })->name('index');
         // Rutas empleados retirados
         Route::get('/retirados', [EmpleadosRetiradosController::class, 'index'])->name('retirados.index');
 
@@ -222,9 +222,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     // Grupo empleados acciones generales
     Route::prefix('empleados-acciones')->name('empleados.acciones.')->group(function () {
-        // Rutas modulo index
-        Route::get('/', [ModuloEmpleadosAccionesController::class, 'index'])->name('index');
-
+        // Rutas index
+        Route::get('/', function () {
+            return Inertia::render('Empleados/Rutas/RutasAccionesGeneralesIndex');
+        })->name('index');
         // Rutas empleados red wifi
         Route::get('/wifi', [ControlWifiController::class, 'index'])->name('wifi.index');
         Route::post('/wifi/store', [ControlWifiController::class, 'store'])->name('wifi.store');
@@ -273,12 +274,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-// Estudintes paneles de registro registro
+// Estudiantes paneles de registro
 Route::middleware(['auth', 'verified'])->group(function () {
     // Grupo estudiantes panel de registro
     Route::prefix('estudiantes-registro')->name('estudiantes.registro.')->group(function () {
-        // Rutas modulo index
-        Route::get('/', [ModuloEstudiantesRegistroController::class, 'index'])->name('index');
+
+        // Rutas index
+        Route::get('/', function () {
+            return Inertia::render('Estudiantes/Rutas/RutasRegistrosIndex');
+        })->name('index');
+
         // Rutas asignacio de cupos
         Route::get('/asignacion/cupo', [GestionDeCuposController::class, 'index'])->name('asignacion.cupo.index');
         Route::post('/asignacion/cupo', [GestionDeCuposController::class, 'store'])->name('asignacion.cupo.store');
@@ -303,31 +308,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-// Rutas para imprimir documentos
-Route::middleware(['auth', 'verified'])->group(function () {
-    //rutas de exportar pdf y excell empleados
-    Route::get('/ExportDocumentosEmpleados', [ExportDocEmpleadosPdfController::class, 'exportDocumentosEmpleado'])->name('ExportDocumentosEmpleados');
-    Route::get('/estudiantesExport', [ExportDocEstudiantesController::class, 'exportDocumentosEstudiante'])->name('estudiantesExport');
-
-    //rutas estudiantes activos
-    Route::get('/estudiantesActivosExport', [ExportDocEstudiantesActivosController::class, 'exportDocumentosEstudianteActivo'])->name('estudiantesActivosExport');
-    
-    //rutas estudiantes inactivos
-    Route::get('/estudiantesInactivosExport', [ExportDocEstudiantesInactivosController::class, 'exportDocumentosEstudianteInactivo'])->name('estudiantesInactivosExport');
-
-    //rutas estudiantes aprobados reprobados
-    Route::get('/estudiantesCalificadosExport', [ExportDocEstudiantesCalificadosController::class, 'exportDocumentosEstudianteCalificado'])->name('estudiantesCalificadosExport');
-
-
-    Route::post('/control/de/actividades', [ExportDocEstudiantesController::class, 'ControlDeActividades'])->name('control.de.actividades');
-});
-
 // Rutas generales estudiantes activos
 Route::middleware(['auth', 'verified'])->group(function () {
     // Grupo empleados activos
     Route::prefix('estudiantes-activos')->name('estudiantes.activos.')->group(function () {
-        // Rutas modulo index
-        Route::get('/', [ModuloEstudiantesActivosController::class, 'index'])->name('index');
+        // Rutas index
+        Route::get('/', function () {
+            return Inertia::render('Estudiantes/Rutas/RutasActivosIndex');
+        })->name('index');
 
         // Rutas estudiantes activos por grado listados
         Route::get('/listado', [EstudiantesPorGradoController::class, 'index'])->name('listado.index');
@@ -370,8 +358,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     // Grupo estudiantes  inactivos
     Route::prefix('estudiantes-inactivos')->name('estudiantes.inactivos.')->group(function () {
-        // Rutas modulo index
-        Route::get('/', [ModuloEstudiantesInactivosController::class, 'index'])->name('index');
+
+        // Rutas index
+        Route::get('/', function () {
+            return Inertia::render('Estudiantes/Rutas/RutasInactivosIndex');
+        })->name('index');
 
         // Rutas estudiantes inactivos retirados
         Route::get('/retirados', [EstudiantesRetiradosController::class, 'index'])->name('retirados.index');
@@ -391,13 +382,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-
 // Rutas generales acciones estudiantes 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Grupo estudiantes acciones
     Route::prefix('estudiantes-acciones')->name('estudiantes.acciones.')->group(function () {
-        // Rutas modulo index
-        Route::get('/', [ModuloEstudiantesAccionesController::class, 'index'])->name('index');
+        // Rutas  index
+        Route::get('/', function () {
+            return Inertia::render('Estudiantes/Rutas/RutasAccionesGeneralesIndex');
+        })->name('index');
 
         // Rutas estudiantes acciones estadisticas
         Route::get('/estadisticas', [EstadisticasController::class, 'index'])->name('estadisticas.index');
@@ -449,12 +441,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 });
 
-// Rutas modulos generales de impresiones estudiantes
+// Rutas gestiones generales de pdfs estudiantes
 Route::middleware(['auth', 'verified'])->group(function () {
     // Grupo empleados activos
     Route::prefix('estudiantes-impresiones')->name('estudiantes.impresiones.')->group(function () {
-        // Rutas modulo index
-        Route::get('/', [ModuloEstudiantesImpresionesController::class, 'index'])->name('index');
+    
+        // Rutas index
+        Route::get('/', function () {
+            return Inertia::render('Estudiantes/Rutas/RutasGestionPdfsIndex');
+        })->name('index');
 
         // Rutas impresion por grado activos listados
         Route::get('/documentos/por/grado', [ModuloDeImpresionesController::class, 'docPorGrados'])->name('documentos.por.grado');
@@ -463,6 +458,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
+// Rutas para imprimir documentos estudiantes y empleados
+Route::middleware(['auth', 'verified'])->group(function () {
+    //rutas de exportar pdf y excell empleados
+    Route::get('/ExportDocumentosEmpleados', [ExportDocEmpleadosPdfController::class, 'exportDocumentosEmpleado'])->name('ExportDocumentosEmpleados');
+    Route::get('/estudiantesExport', [ExportDocEstudiantesController::class, 'exportDocumentosEstudiante'])->name('estudiantesExport');
+
+    //rutas estudiantes activos
+    Route::get('/estudiantesActivosExport', [ExportDocEstudiantesActivosController::class, 'exportDocumentosEstudianteActivo'])->name('estudiantesActivosExport');
+
+    //rutas estudiantes inactivos
+    Route::get('/estudiantesInactivosExport', [ExportDocEstudiantesInactivosController::class, 'exportDocumentosEstudianteInactivo'])->name('estudiantesInactivosExport');
+
+    //rutas estudiantes aprobados reprobados
+    Route::get('/estudiantesCalificadosExport', [ExportDocEstudiantesCalificadosController::class, 'exportDocumentosEstudianteCalificado'])->name('estudiantesCalificadosExport');
+
+
+    Route::post('/control/de/actividades', [ExportDocEstudiantesController::class, 'ControlDeActividades'])->name('control.de.actividades');
+});
 
 // Ruta verificar permisos activos automaticmante y los envia al modal de gestionar permiso
 Route::get('/api/verificar/permisos/{id}', function ($id) {

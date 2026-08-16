@@ -90,7 +90,7 @@ export default function NivelesIndex({ niveles }) {
                 icon="GraduationCap"
                 showSearch={false}
                 actions={
-                    <Link href={route("settings.institucion.index")}>
+                    <Link href={route("settings.index")}>
                         <Button>
                             <ChevronLeftCircle size={16} /> VOLVER
                         </Button>

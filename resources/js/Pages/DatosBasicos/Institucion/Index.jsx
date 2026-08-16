@@ -94,16 +94,48 @@ export default function Institucion({ institucion }) {
         }
     }, [isEditing]);
 
-    // 2. Modificamos el handleChange para limpiar errores en tiempo real
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+
+    const handleFieldChange = (nameOrEvent, valueOrUndefined) => {
+        let name, value;
+
+        // Si el primer argumento es un objeto con target, es un evento
+        if (nameOrEvent && nameOrEvent.target) {
+            name = nameOrEvent.target.name;
+            value = nameOrEvent.target.value;
+        }
+        // Si el primer argumento es string y el segundo es el valor
+        else if (
+            typeof nameOrEvent === "string" &&
+            valueOrUndefined !== undefined
+        ) {
+            name = nameOrEvent;
+            value = valueOrUndefined;
+        }
+        // Si solo recibimos un valor y no tenemos nombre
+        else {
+            console.warn(
+                "Formato no reconocido para handleFieldChange:",
+                nameOrEvent,
+            );
+            return;
+        }
+
         setData(name, value);
         setHasChanges(true);
 
-        // Esto elimina el error visual apenas el usuario escribe una letra
         if (errors[name]) {
             clearErrors(name);
         }
+    };
+
+    // Para inputs normales
+    const handleChange = (e) => {
+        handleFieldChange(e);
+    };
+
+    // Para SelectFields
+    const handleSelectChange = (name, value) => {
+        handleFieldChange(name, value);
     };
 
     const handleSave = (e, redirectUrl = null) => {
@@ -153,22 +185,7 @@ export default function Institucion({ institucion }) {
                                     VOLVER
                                 </Button>
                             </Link>
-                            <Link
-                                href={route(
-                                    "settings.institucion.inmuebles.index",
-                                )}
-                            >
-                                <Button variant="success">
-                                    <Home className="text-white w-4 h-4" />
-                                    INMUEBLES
-                                </Button>
-                            </Link>
-                            <Link href={route("settings.institucion.niveles")}>
-                                <Button variant="success">
-                                    <GraduationCap className="text-white w-4 h-4" />
-                                    NIVELES
-                                </Button>
-                            </Link>
+                           
                             {institucion && !isEditing && (
                                 <Button
                                     onClick={() => setIsEditing(true)}
@@ -195,7 +212,7 @@ export default function Institucion({ institucion }) {
                 >
                     <form
                         onSubmit={handleSave}
-                        className="flex flex-col h-full overflow-hidden"
+                        className="flex flex-col overflow-hidden"
                     >
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 overflow-y-auto p-2 custom-scrollbar">
                             {/* COLUMNA 1: IDENTIDAD */}

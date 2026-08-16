@@ -137,8 +137,8 @@ const ViewContainer = forwardRef(function ViewContainer(
             {...props}
         >
             {/* 1. HEADER */}
-            <header className="flex-none bg-white px-8 py-1 h-16 flex items-center justify-between border-b border-gray-100 shadow-sm z-30">
-                <div className="flex items-center gap-5">
+            <header className="flex-none bg-white px-4 py-1 h-16 flex items-center justify-between border-b border-gray-100 shadow-sm z-30">
+                <div className="flex items-center gap-3">
                     {IconComponent && (
                         <div className="relative group">
                             <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-blue-600 blur-lg opacity-20 group-hover:opacity-40 transition-opacity"></div>
@@ -219,7 +219,7 @@ const ViewContainer = forwardRef(function ViewContainer(
             )}
 
             {/* 3. CUERPO */}
-            <main className="flex-1 overflow-auto p-2 custom-scrollbar">
+            <main className="flex-1 bg-gradient-to-r from-gray-600 via-slate-200 to-gray-300 overflow-auto p-2 custom-scrollbar">
                 {children}
             </main>
 

@@ -18,6 +18,145 @@ use Inertia\Inertia;
 class EstudiantesGraduadosController extends Controller
 {
 
+    // public function index(Request $request)
+    // {
+    //     $search = $request->search;
+
+    //     // Buscar en estudiante_periodos con status 'Graduado'
+    //     $query = DB::table('estudiante_periodos')
+    //         ->join('estudiantes', 'estudiante_periodos.estudiante_id', '=', 'estudiantes.id')
+    //         ->join('grados', 'estudiante_periodos.grado_id', '=', 'grados.id')
+    //         ->join('periodo_escolars', 'estudiante_periodos.periodo_id', '=', 'periodo_escolars.id')
+    //         ->where('estudiante_periodos.status', 'Graduado')
+    //         ->select(
+    //             'estudiantes.id as estudiante_id',
+    //             'estudiantes.name',
+    //             'estudiantes.apellido',
+    //             'estudiantes.cedula',
+    //             'estudiantes.documento',
+    //             'estudiantes.sexo',
+    //             'estudiantes.fecha_de_nacimiento',
+    //             'grados.nombre_del_grado',
+    //             'grados.seccion',
+    //             'periodo_escolars.nombre_periodo as periodo_escolar',
+    //             'periodo_escolars.id as periodo_id',
+    //             'estudiante_periodos.status',
+    //             'estudiante_periodos.status_escolar',
+    //             'estudiante_periodos.apreciacion',
+    //             'estudiante_periodos.fecha_registro',
+    //             'estudiante_periodos.contador_impresiones',
+    //             'estudiante_periodos.estudiante_id',
+    //             'estudiante_periodos.periodo_id',
+    //             'estudiante_periodos.grado_id',
+    //             DB::raw("CONCAT(estudiantes.id, '-', estudiante_periodos.periodo_id, '-', estudiante_periodos.grado_id) as periodo_estudiante_id")
+    //         );
+
+    //     // Aplicar búsqueda
+    //     if ($search) {
+    //         $query->where(function ($q) use ($search) {
+    //             $q->where('estudiantes.name', 'LIKE', "%{$search}%")
+    //                 ->orWhere('estudiantes.apellido', 'LIKE', "%{$search}%")
+    //                 ->orWhere('estudiantes.cedula', 'LIKE', "%{$search}%");
+    //         });
+    //     }
+
+    //     // Ordenar por fecha_registro o periodo_id
+    //     $estudiantes = $query->orderBy('estudiante_periodos.fecha_registro', 'desc')
+    //         ->orderBy('periodo_escolars.id', 'desc')
+    //         ->paginate(5)
+    //         ->withQueryString();
+
+    //     // Transformar los datos
+    //     $estudiantes->getCollection()->transform(function ($item) {
+    //         $age = $item->fecha_de_nacimiento ? \Carbon\Carbon::parse($item->fecha_de_nacimiento)->age : null;
+
+    //         return (object) [
+    //             'id' => $item->estudiante_id,
+    //             'estudiante_id' => $item->estudiante_id,
+    //             'periodo_id' => $item->periodo_id,
+    //             'grado_id' => $item->grado_id,
+    //             'periodo_estudiante_id' => $item->periodo_estudiante_id,
+    //             'name' => $item->name,
+    //             'apellido' => $item->apellido,
+    //             'cedula' => $item->cedula,
+    //             'documento' => $item->documento,
+    //             'sexo' => $item->sexo,
+    //             'fecha_de_nacimiento' => $item->fecha_de_nacimiento,
+    //             'age' => $age,
+    //             'nombre_del_grado' => $item->nombre_del_grado,
+    //             'seccion' => $item->seccion,
+    //             'periodo_escolar' => $item->periodo_escolar,
+    //             'status' => $item->status,
+    //             'status_escolar' => $item->status_escolar,
+    //             'apreciacion' => $item->apreciacion,
+    //             'fecha_registro' => $item->fecha_registro,
+    //             'contador_impresiones' => $item->contador_impresiones ?? 0,
+    //         ];
+    //     });
+
+    //     // 🔥 NUEVO: Totales generales
+    //     $totalQuery = clone $query;
+    //     $totales = [
+    //         'general' => (clone $totalQuery)->count(),
+    //         'masculino' => (clone $totalQuery)->where('estudiantes.sexo', 'M')->count(),
+    //         'femenino' => (clone $totalQuery)->where('estudiantes.sexo', 'F')->count(),
+    //     ];
+
+
+    //     // 🔥 NUEVO: Conteo por periodo escolar
+    //     $conteoPorPeriodo = DB::table('estudiante_periodos')
+    //         ->join('periodo_escolars', 'estudiante_periodos.periodo_id', '=', 'periodo_escolars.id')
+    //         ->where('estudiante_periodos.status', 'Graduado')
+    //         ->select(
+    //             'periodo_escolars.id as periodo_id',
+    //             'periodo_escolars.nombre_periodo',
+    //             DB::raw('COUNT(*) as total_graduados')
+    //         )
+    //         ->groupBy('periodo_escolars.id', 'periodo_escolars.nombre_periodo')
+    //         ->orderBy('periodo_escolars.id', 'desc')
+    //         ->get();
+
+    //     // 🔥 NUEVO: Conteo por periodo y sexo
+    //     $conteoPorPeriodoSexo = DB::table('estudiante_periodos')
+    //         ->join('estudiantes', 'estudiante_periodos.estudiante_id', '=', 'estudiantes.id')
+    //         ->join('periodo_escolars', 'estudiante_periodos.periodo_id', '=', 'periodo_escolars.id')
+    //         ->where('estudiante_periodos.status', 'Graduado')
+    //         ->select(
+    //             'periodo_escolars.id as periodo_id',
+    //             'periodo_escolars.nombre_periodo',
+    //             'estudiantes.sexo',
+    //             DB::raw('COUNT(*) as total')
+    //         )
+    //         ->groupBy('periodo_escolars.id', 'periodo_escolars.nombre_periodo', 'estudiantes.sexo')
+    //         ->orderBy('periodo_escolars.id', 'desc')
+    //         ->get()
+    //         ->groupBy('periodo_id');
+
+    //     // 🔥 NUEVO: Formatear datos por periodo
+    //     $periodos = $conteoPorPeriodo->map(function ($periodo) use ($conteoPorPeriodoSexo) {
+    //         $sexos = $conteoPorPeriodoSexo->get($periodo->periodo_id, collect());
+
+    //         return [
+    //             'periodo_id' => $periodo->periodo_id,
+    //             'nombre_periodo' => $periodo->nombre_periodo,
+    //             'total_graduados' => $periodo->total_graduados,
+    //             'masculino' => $sexos->where('sexo', 'M')->first()->total ?? 0,
+    //             'femenino' => $sexos->where('sexo', 'F')->first()->total ?? 0,
+    //         ];
+    //     });
+
+    //     $apreciacionesAprobadas = Apreciacion::aprobados()->get();
+
+    //     return Inertia::render('Estudiantes/EstudiantesGraduados/Index', [
+    //         'datos' => $estudiantes,
+    //         'apreciacionesAprobadas' => $apreciacionesAprobadas,
+    //         'totals' => $totales,
+    //         'conteoPorPeriodo' => $periodos,  // 🔥 NUEVO: Enviar a la vista
+    //         'filters' => ['search' => $search],
+    //     ]);
+    // }
+
+
     public function index(Request $request)
     {
         $search = $request->search;
@@ -29,7 +168,7 @@ class EstudiantesGraduadosController extends Controller
             ->join('periodo_escolars', 'estudiante_periodos.periodo_id', '=', 'periodo_escolars.id')
             ->where('estudiante_periodos.status', 'Graduado')
             ->select(
-                'estudiantes.id as estudiante_id',                    // 🔥 CAMBIADO
+                'estudiantes.id as estudiante_id',
                 'estudiantes.name',
                 'estudiantes.apellido',
                 'estudiantes.cedula',
@@ -39,14 +178,15 @@ class EstudiantesGraduadosController extends Controller
                 'grados.nombre_del_grado',
                 'grados.seccion',
                 'periodo_escolars.nombre_periodo as periodo_escolar',
+                'periodo_escolars.id as periodo_id',
                 'estudiante_periodos.status',
                 'estudiante_periodos.status_escolar',
                 'estudiante_periodos.apreciacion',
                 'estudiante_periodos.fecha_registro',
-                'estudiante_periodos.contador_impresiones',          // 🔥 AGREGADO
-                'estudiante_periodos.estudiante_id',                  // 🔥 AGREGADO
-                'estudiante_periodos.periodo_id',                     // 🔥 AGREGADO
-                'estudiante_periodos.grado_id',                       // 🔥 AGREGADO
+                'estudiante_periodos.contador_impresiones',
+                'estudiante_periodos.estudiante_id',
+                'estudiante_periodos.periodo_id',
+                'estudiante_periodos.grado_id',
                 DB::raw("CONCAT(estudiantes.id, '-', estudiante_periodos.periodo_id, '-', estudiante_periodos.grado_id) as periodo_estudiante_id")
             );
 
@@ -70,10 +210,10 @@ class EstudiantesGraduadosController extends Controller
             $age = $item->fecha_de_nacimiento ? \Carbon\Carbon::parse($item->fecha_de_nacimiento)->age : null;
 
             return (object) [
-                'id' => $item->estudiante_id,                         // 🔥 CAMBIADO
-                'estudiante_id' => $item->estudiante_id,              // 🔥 AGREGADO
-                'periodo_id' => $item->periodo_id,                    // 🔥 AGREGADO
-                'grado_id' => $item->grado_id,                        // 🔥 AGREGADO
+                'id' => $item->estudiante_id,
+                'estudiante_id' => $item->estudiante_id,
+                'periodo_id' => $item->periodo_id,
+                'grado_id' => $item->grado_id,
                 'periodo_estudiante_id' => $item->periodo_estudiante_id,
                 'name' => $item->name,
                 'apellido' => $item->apellido,
@@ -89,17 +229,53 @@ class EstudiantesGraduadosController extends Controller
                 'status_escolar' => $item->status_escolar,
                 'apreciacion' => $item->apreciacion,
                 'fecha_registro' => $item->fecha_registro,
-                'contador_impresiones' => $item->contador_impresiones ?? 0,  // 🔥 AGREGADO
+                'contador_impresiones' => $item->contador_impresiones ?? 0,
             ];
         });
 
-        // Totales
+        // 🔥 Totales generales
+        // 🔥 NUEVO: Totales generales
         $totalQuery = clone $query;
         $totales = [
-            'general' => $totalQuery->count(),
-            'masculino' => $totalQuery->where('estudiantes.sexo', 'M')->count(),
-            'femenino' => $totalQuery->where('estudiantes.sexo', 'F')->count(),
+            'general' => (clone $totalQuery)->count(),
+            'masculino' => (clone $totalQuery)->where('estudiantes.sexo', 'M')->count(),
+            'femenino' => (clone $totalQuery)->where('estudiantes.sexo', 'F')->count(),
         ];
+
+        // 🔥 NUEVO: Conteo por periodo escolar (con sexos)
+        $conteoPorPeriodo = DB::table('estudiante_periodos')
+            ->join('periodo_escolars', 'estudiante_periodos.periodo_id', '=', 'periodo_escolars.id')
+            ->join('estudiantes', 'estudiante_periodos.estudiante_id', '=', 'estudiantes.id')
+            ->where('estudiante_periodos.status', 'Graduado')
+            ->select(
+                'periodo_escolars.id as periodo_id',
+                'periodo_escolars.nombre_periodo as periodo_escolar', // <--- AGREGA EL ALIAS AQUÍ
+                DB::raw('COUNT(*) as total_graduados'),
+                DB::raw("SUM(CASE WHEN estudiantes.sexo = 'M' THEN 1 ELSE 0 END) as masculino"),
+                DB::raw("SUM(CASE WHEN estudiantes.sexo = 'F' THEN 1 ELSE 0 END) as femenino")
+            )
+            ->groupBy('periodo_escolars.id', 'periodo_escolars.nombre_periodo') // Asegúrate que el nombre aquí coincida con la tabla
+            ->orderBy('periodo_escolars.id', 'desc')
+            ->get();
+
+        // 🔥 NUEVO: Conteo por grado dentro de cada periodo
+        $conteoPorGrado = DB::table('estudiante_periodos')
+            ->join('periodo_escolars', 'estudiante_periodos.periodo_id', '=', 'periodo_escolars.id')
+            ->join('grados', 'estudiante_periodos.grado_id', '=', 'grados.id')
+            ->where('estudiante_periodos.status', 'Graduado')
+            ->select(
+                'periodo_escolars.id as periodo_id',
+                'periodo_escolars.nombre_periodo as periodo_escolar',
+                'grados.id as grado_id',
+                'grados.nombre_del_grado',
+                'grados.seccion',
+                DB::raw('COUNT(*) as total_graduados')
+            )
+            ->groupBy('periodo_escolars.id', 'periodo_escolars.nombre_periodo', 'grados.id', 'grados.nombre_del_grado', 'grados.seccion')
+            ->orderBy('periodo_escolars.id', 'desc')
+            ->orderBy('grados.nombre_del_grado')
+            ->get()
+            ->groupBy('periodo_id');
 
         $apreciacionesAprobadas = Apreciacion::aprobados()->get();
 
@@ -107,10 +283,11 @@ class EstudiantesGraduadosController extends Controller
             'datos' => $estudiantes,
             'apreciacionesAprobadas' => $apreciacionesAprobadas,
             'totals' => $totales,
+            'conteoPorPeriodo' => $conteoPorPeriodo,  // 🔥 Enviar a la vista
+            'conteoPorGrado' => $conteoPorGrado,      // 🔥 Enviar a la vista
             'filters' => ['search' => $search],
         ]);
     }
-
 
     /**
      * Mostrar un estudiante graduado específico

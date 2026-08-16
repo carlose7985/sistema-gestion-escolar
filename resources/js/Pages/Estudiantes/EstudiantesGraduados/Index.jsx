@@ -23,7 +23,9 @@ import {
     Plus,
     Mars,
     Venus,
-    FileCheck,
+    ChevronDown,
+    PieChart,
+    BarChart3,
     Award as AwardIcon,
     TriangleAlert,
 } from "lucide-react";
@@ -35,13 +37,18 @@ export default function EstudiantesGraduados({
     filters,
     totals,
     apreciacionesAprobadas,
+    conteoPorPeriodo,
+    showPeriodos,
+    conteoPorGrado,
+    showGrados,
 }) {
     // --- ESTADOS ---
     const [searchTerm, setSearchTerm] = useState(filters?.search || "");
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const isTyping = useRef(false);
-
+    const [isPeriodModalOpen, setIsPeriodModalOpen] = useState(false);
+    const [isGradesModalOpen, setIsGradesModalOpen] = useState(false);
     // --- ESTADOS PARA IMPRESIÓN ---
     const [printModal, setPrintModal] = useState({
         open: false,
@@ -268,13 +275,64 @@ export default function EstudiantesGraduados({
                     </Link>
                 }
                 actions={
-                    <Link
-                        href={route("estudiantes.inactivos.graduados.create")}
-                    >
-                        <Button variant="primary">
-                            <Plus size={16} className="mr-2" /> NUEVO REGISTRO
+                    <div className="flex items-center gap-2">
+                        {/* 🔥 BOTÓN 1: Egresados por Periodo */}
+                        <Button
+                            variant="outline"
+                            className="relative hover:bg-indigo-50"
+                            onClick={() => setIsPeriodModalOpen(true)} // <--- Cambiar esto
+                            title="Ver egresados por periodo"
+                        >
+                            <BarChart3
+                                size={16}
+                                className="mr-1.5 text-indigo-500"
+                            />
+                            PERIODOS
+                            <span className="ml-1.5 bg-indigo-100 text-indigo-700 text-[9px] font-black px-1.5 py-0.5 rounded-full">
+                                {conteoPorPeriodo?.reduce(
+                                    (acc, p) => acc + p.total_graduados,
+                                    0,
+                                ) || 0}
+                            </span>
                         </Button>
-                    </Link>
+
+                        {/* 🔥 BOTÓN 2: Egresados por Grado */}
+                        <Button
+                            variant="outline"
+                            className="relative hover:bg-emerald-50 transition-all"
+                            onClick={() => setIsGradesModalOpen(true)} // <--- Abrir modal
+                            title="Ver egresados por grado"
+                        >
+                            <PieChart
+                                size={16}
+                                className="mr-1.5 text-emerald-500"
+                            />
+                            GRADOS
+                            <span className="ml-1.5 bg-emerald-100 text-emerald-700 text-[9px] font-black px-1.5 py-0.5 rounded-full">
+                                {Object.values(conteoPorGrado || {}).reduce(
+                                    (acc, grados) =>
+                                        acc +
+                                        grados.reduce(
+                                            (sum, g) => sum + g.total_graduados,
+                                            0,
+                                        ),
+                                    0,
+                                ) || 0}
+                            </span>
+                        </Button>
+
+                        {/* Botón Nuevo Registro */}
+                        <Link
+                            href={route(
+                                "estudiantes.inactivos.graduados.create",
+                            )}
+                        >
+                            <Button variant="primary">
+                                <Plus size={16} className="mr-2" /> NUEVO
+                                REGISTRO
+                            </Button>
+                        </Link>
+                    </div>
                 }
                 footerStats={
                     <div className="flex items-center gap-6 text-slate-500 font-black text-[10px] uppercase">
@@ -724,7 +782,6 @@ export default function EstudiantesGraduados({
                                                 }
                                             }}
                                             error={editForm.errors.name}
-                                            
                                         />
                                     </div>
 
@@ -745,7 +802,6 @@ export default function EstudiantesGraduados({
                                                 }
                                             }}
                                             error={editForm.errors.apellido}
-                                            
                                         />
                                     </div>
 
@@ -873,6 +929,227 @@ export default function EstudiantesGraduados({
                                             : "Guardar Cambios Históricos"}
                                     </Button>
                                 </form>
+                            </div>
+                        </div>,
+                        document.body,
+                    )}
+
+                {/* --- MODAL ESTADÍSTICAS POR PERIODO --- */}
+                {isPeriodModalOpen &&
+                    createPortal(
+                        <div className="fixed inset-0 z-[500] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-300">
+                            <div className="bg-white rounded-[3rem] w-full max-w-md p-10 shadow-3xl border-2 border-indigo-100 relative animate-in zoom-in-95 duration-300">
+                                {/* Botón Cerrar */}
+                                <button
+                                    onClick={() => setIsPeriodModalOpen(false)}
+                                    className="absolute top-8 right-8 text-slate-300 hover:text-rose-500 hover:rotate-90 transition-all duration-300"
+                                >
+                                    <X size={28} />
+                                </button>
+
+                                {/* Header */}
+                                <div className="flex items-center gap-5 mb-10">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-indigo-200">
+                                        <BarChart3 size={32} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-2xl font-black text-slate-800 uppercase italic leading-none">
+                                            Egresados
+                                        </h3>
+                                        <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-[0.2em] mt-2">
+                                            Distribución por Periodo
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Lista con scroll robusto */}
+                                <div className="space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
+                                    {conteoPorPeriodo &&
+                                    conteoPorPeriodo.length > 0 ? (
+                                        conteoPorPeriodo.map((p, idx) => (
+                                            <div
+                                                key={idx}
+                                                className="flex items-center justify-between p-5 bg-slate-50 border border-slate-100 rounded-[1.5rem] group hover:border-indigo-300 hover:bg-white hover:shadow-xl hover:shadow-indigo-50 transition-all duration-300"
+                                            >
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-400 group-hover:text-indigo-500 group-hover:border-indigo-200 transition-colors shadow-sm">
+                                                        <History size={18} />
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                                            Periodo Escolar
+                                                        </span>
+                                                        <span className="text-sm font-black text-slate-700 uppercase tracking-tighter">
+                                                            {/* Ahora p.periodo_escolar tendrá el valor del alias que pusimos en PHP */}
+                                                            {p.periodo_escolar}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-2xl font-black text-indigo-600 leading-none">
+                                                            {p.total_graduados}
+                                                        </span>
+                                                        <AwardIcon
+                                                            size={16}
+                                                            className="text-amber-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        />
+                                                    </div>
+                                                    <p className="text-[9px] font-black text-slate-400 uppercase mt-1">
+                                                        Egresados
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-12 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200">
+                                            <Search
+                                                size={40}
+                                                className="mx-auto text-slate-200 mb-3"
+                                            />
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                                No se encontraron periodos
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Footer del Modal */}
+                                <div className="mt-8">
+                                    <Button
+                                        variant="primary"
+                                        className="w-full h-16 rounded-[1.5rem] font-black uppercase text-xs tracking-[0.2em] shadow-xl shadow-indigo-100"
+                                        onClick={() =>
+                                            setIsPeriodModalOpen(false)
+                                        }
+                                    >
+                                        Entendido
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>,
+                        document.body,
+                    )}
+
+                {/* --- MODAL ESTADÍSTICAS POR GRADO --- */}
+                {isGradesModalOpen &&
+                    createPortal(
+                        <div className="fixed inset-0 z-[550] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-300">
+                            <div className="bg-white rounded-[3rem] w-full max-w-xl p-10 shadow-3xl border-2 border-emerald-100 relative animate-in zoom-in-95 duration-300">
+                                {/* Botón Cerrar */}
+                                <button
+                                    onClick={() => setIsGradesModalOpen(false)}
+                                    className="absolute top-8 right-8 text-slate-300 hover:text-emerald-500 hover:rotate-90 transition-all duration-300"
+                                >
+                                    <X size={28} />
+                                </button>
+
+                                {/* Header */}
+                                <div className="flex items-center gap-5 mb-8">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-emerald-100">
+                                        <PieChart size={32} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-2xl font-black text-slate-800 uppercase italic leading-none">
+                                            Egresados por Grado
+                                        </h3>
+                                        <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.2em] mt-2">
+                                            Desglose detallado por sección
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Contenido con Scroll */}
+                                <div className="space-y-6 max-h-[450px] overflow-y-auto pr-3 custom-scrollbar">
+                                    {conteoPorGrado &&
+                                    Object.keys(conteoPorGrado).length > 0 ? (
+                                        Object.keys(conteoPorGrado).map(
+                                            (periodoId) => {
+                                                const grados =
+                                                    conteoPorGrado[periodoId];
+                                                const nombrePeriodo =
+                                                    grados[0]?.nombre_periodo ||
+                                                    grados[0]
+                                                        ?.periodo_escolar ||
+                                                    "Periodo Antiguo";
+
+                                                return (
+                                                    <div
+                                                        key={periodoId}
+                                                        className="space-y-3"
+                                                    >
+                                                        {/* Separador de Periodo */}
+                                                        <div className="flex items-center gap-3 px-2">
+                                                            <div className="h-[1px] flex-1 bg-slate-100"></div>
+                                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                                                {nombrePeriodo}
+                                                            </span>
+                                                            <div className="h-[1px] flex-1 bg-slate-100"></div>
+                                                        </div>
+
+                                                        {/* Grid de Grados */}
+                                                        <div className="grid grid-cols-3 gap-3 bg-green-300">
+                                                            {grados.map(
+                                                                (g, idx) => (
+                                                                    <div
+                                                                        key={
+                                                                            idx
+                                                                        }
+                                                                        className="p-2 bg-white border border-slate-100 rounded-2xl shadow-sm hover:border-emerald-200 hover:shadow-md transition-all group"
+                                                                    >
+                                                                        <div className="flex justify-between items-start">
+                                                                            <div>
+                                                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">
+                                                                                    Grado
+                                                                                    /
+                                                                                    Sección
+                                                                                </p>
+                                                                                <p className="text-xs font-black text-slate-700 uppercase">
+                                                                                    {
+                                                                                        g.nombre_del_grado
+                                                                                    }{" "}
+                                                                                    "
+                                                                                    {
+                                                                                        g.seccion
+                                                                                    }
+                                                                                    "
+                                                                                </p>
+                                                                            </div>
+                                                                            <div className="bg-emerald-50 text-emerald-600 w-8 h-8 rounded-lg flex items-center justify-center font-black text-xs border border-emerald-100">
+                                                                                {
+                                                                                    g.total_graduados
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                ),
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            },
+                                        )
+                                    ) : (
+                                        <div className="text-center py-10">
+                                            <p className="text-xs font-bold text-slate-400 uppercase">
+                                                No hay registros por grado
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Footer */}
+                                <div className="mt-8 pt-6 border-t border-slate-100">
+                                    <Button
+                                        variant="primary"
+                                        className="w-full h-16 rounded-[1.5rem] bg-slate-900 font-black uppercase text-xs tracking-widest shadow-xl"
+                                        onClick={() =>
+                                            setIsGradesModalOpen(false)
+                                        }
+                                    >
+                                        Cerrar Reporte
+                                    </Button>
+                                </div>
                             </div>
                         </div>,
                         document.body,

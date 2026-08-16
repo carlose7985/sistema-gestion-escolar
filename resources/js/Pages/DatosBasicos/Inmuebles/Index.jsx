@@ -153,7 +153,7 @@ export default function InmueblesIndex({ inmuebles, areas, filters }) {
                 }
                 actions={
                     <div className="flex gap-2">
-                        <Link href={route("settings.institucion.index")}>
+                        <Link href={route("settings.index")}>
                             <Button>
                                 <ChevronLeftCircle size={16} /> VOLVER
                             </Button>
