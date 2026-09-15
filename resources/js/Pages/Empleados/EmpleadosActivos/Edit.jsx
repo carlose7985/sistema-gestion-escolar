@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import ViewContainer from "@/Components/Layout/ViewContainer";
 import {
@@ -7,10 +7,10 @@ import {
     SelectField,
     MultiSelectField,
 } from "@/Components/Layout/FormComponents";
+import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/Components/ui/button";
-import { Head, useForm, Link } from "@inertiajs/react";
+import { Head, useForm, Link, router } from "@inertiajs/react";
 import * as Icons from "lucide-react";
-
 import { toast } from "sonner";
 
 export default function Edit({ empleado, cargos, areas }) {
@@ -22,6 +22,42 @@ export default function Edit({ empleado, cargos, areas }) {
             : "",
     });
 
+    const [isAreaModalOpen, setIsAreaModalOpen] = useState(false);
+const [newAreaName, setNewAreaName] = useState("");
+const [isSavingArea, setIsSavingArea] = useState(false);
+
+  const handleAddArea = () => {
+      if (!newAreaName.trim()) return toast.error("El nombre es obligatorio");
+
+      setIsSavingArea(true);
+
+      router.post(
+          route("settings.areas.storeFast"),
+          {
+              nombre_del_area: newAreaName,
+          },
+          {
+              preserveScroll: true,
+              onSuccess: () => {
+                  const nuevaArea = newAreaName.toUpperCase();
+                  // Aseguramos que area_de_trabajo sea un array y agregamos la nueva área
+                  const areasActuales = Array.isArray(data.area_de_trabajo)
+                      ? data.area_de_trabajo
+                      : [];
+                  if (!areasActuales.includes(nuevaArea)) {
+                      setData("area_de_trabajo", [...areasActuales, nuevaArea]);
+                  }
+                  setIsAreaModalOpen(false);
+                  setNewAreaName("");
+              },
+              onError: (err) => {
+                  toast.error(Object.values(err)[0]);
+              },
+              onFinish: () => setIsSavingArea(false),
+          },
+      );
+  };
+    
     const gradosDisponibles = useMemo(() => {
         const comunes = [
             "Primaria",
@@ -473,11 +509,78 @@ export default function Edit({ empleado, cargos, areas }) {
                             loading={processing}
                             className="shadow-blue-200"
                         >
-                            <Icons.Save size={20} /> REGISTRAR EMPLEADO
+                            <Icons.Save size={20} /> Actualizar Datos
                         </Button>
                     </div>
                 </form>
             </ViewContainer>
+
+               {/* MODAL ÁREA RÁPIDA */}
+                        <AnimatePresence>
+                            {isAreaModalOpen && (
+                                <div
+                                    className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4"
+                                    onClick={() =>
+                                        !isSavingArea && setIsAreaModalOpen(false)
+                                    } // No cerrar si está cargando
+                                >
+                                    <motion.div
+                                        initial={{ scale: 0.9, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        exit={{ scale: 0.9, opacity: 0 }}
+                                        className="bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl relative overflow-hidden"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        {/* OVERLAY DE CARGA EXTRA (Opcional, para máxima elegancia) */}
+                                        <AnimatePresence>
+                                            {isSavingArea && (
+                                                <motion.div
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    className="absolute inset-0 z-10 bg-white/60 backdrop-blur-[2px] flex items-center justify-center"
+                                                >
+                                                    <Icons.Loader2
+                                                        className="animate-spin text-blue-600"
+                                                        size={40}
+                                                    />
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+            
+                                        <div className="flex justify-between items-center mb-6">
+                                            <h3 className="font-black uppercase text-xs italic text-slate-800">
+                                                Nueva Área de Trabajo
+                                            </h3>
+                                            <button
+                                                onClick={() => setIsAreaModalOpen(false)}
+                                                disabled={isSavingArea}
+                                            >
+                                                <Icons.X className="text-slate-300 hover:text-rose-500 transition-colors" />
+                                            </button>
+                                        </div>
+            
+                                        <Field
+                                            label="Identificador del Área"
+                                            upperCase
+                                            autoFocus
+                                            value={newAreaName}
+                                            onChange={(e) => setNewAreaName(e.target.value)}
+                                            disabled={isSavingArea} // Bloquear input al guardar
+                                        />
+            
+                                        <Button
+                                            onClick={handleAddArea}
+                                            variant="primary"
+                                            size="lg" // Cambiado a lg para que se vea más elegante
+                                            className="w-full mt-8"
+                                            loading={isSavingArea} // <--- EL SPINNER ACTIVO
+                                        >
+                                            CREAR Y SELECCIONAR
+                                        </Button>
+                                    </motion.div>
+                                </div>
+                            )}
+                        </AnimatePresence>
         </AuthenticatedLayout>
     );
 }

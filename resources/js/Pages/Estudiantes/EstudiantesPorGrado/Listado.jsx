@@ -525,6 +525,7 @@ export default function ListadoPorGrado({
                                                             className="text-amber-500"
                                                         />
                                                     ) : (
+                                                            
                                                         <CheckCircle2
                                                             size={16}
                                                             className="text-emerald-500"
@@ -557,7 +558,8 @@ export default function ListadoPorGrado({
                                                         </div>
                                                         <div className="flex items-center gap-1 bg-green-50 text-green-700 px-1.5 rounded-md font-black">
                                                             <Cake size={10} />
-                                                            {student.age} Años
+                                                            {student.age} Años, Sexo{" "}
+                                                            {student.sexo}
                                                         </div>
                                                     </div>
                                                 </div>

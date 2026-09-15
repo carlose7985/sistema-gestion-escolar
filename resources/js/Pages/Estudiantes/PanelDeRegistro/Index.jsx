@@ -63,11 +63,16 @@ export default function RegistroEstudiantil({
 
     return (
         <AuthenticatedLayout>
-            <Head title="Registro Estudiantil" />
+            <Head title={`Registro Período ${periodo_escolar}`} />
 
             <ViewContainer
-                title="Registro Estudiantil"
-                subtitle="Gestión global de inscripciones, asignaciones y control de cupos"
+                title={`Registro Estudiantil - Período Escolar ${periodo_escolar || "N/A"}`}
+                // 🔥 Subtítulo con estado de inscripciones
+                subtitle={`Gestión global de registro | Proceso: ${
+                    isRegistrationOpen
+                        ? "Inscripciones Abiertas"
+                        : "Cerrado (Registro Regular)"
+                }`}
                 icon="UserPlus"
                 showSearch={false}
                 returns={
@@ -79,44 +84,10 @@ export default function RegistroEstudiantil({
                 }
             >
                 <div className="h-full flex flex-col p-2 gap-4 overflow-hidden">
-                    {/* 1. SECCIÓN SUPERIOR: ESTADO DEL PERÍODO Y ESTUDIANTES SIN GRADO (SGA) */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        {/* Indicador de Estado del Período */}
-                        <div
-                            className={`flex items-center justify-between p-4 bg-white border-l-4 rounded-2xl shadow-sm border border-slate-100 ${
-                                isRegistrationOpen
-                                    ? "border-l-emerald-500"
-                                    : "border-l-amber-500"
-                            }`}
-                        >
-                            <div className="flex items-center gap-3">
-                                <div
-                                    className={`p-2.5 rounded-xl ${isRegistrationOpen ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"}`}
-                                >
-                                    {isRegistrationOpen ? (
-                                        <DoorOpen size={22} />
-                                    ) : (
-                                        <Lock size={22} />
-                                    )}
-                                </div>
-                                <div>
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
-                                        Estado del Proceso
-                                    </span>
-                                    <h4 className="text-sm font-black text-slate-900 uppercase italic">
-                                        Inscripción{" "}
-                                        {isRegistrationOpen
-                                            ? "Abierta"
-                                            : "Cerrada (Regular)"}
-                                    </h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                   
                     {/* 2. REPEATED GRID DE GRADOS Y CONTROL DE CUPOS */}
                     <div className="flex-1 overflow-y-auto px-1 custom-scrollbar pb-4">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 2xl:grid-cols-6 gap-3.5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 2xl:grid-cols-6 gap-2.5">
                             {grades.map((grade, index) => {
                                 const porcentajeOcupado =
                                     grade.limite_estudiantes > 0
@@ -149,23 +120,25 @@ export default function RegistroEstudiantil({
                                                             : "Activo",
                                                 },
                                             )}
-                                            className="group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-xl hover:border-indigo-500 transition-all flex flex-col justify-between h-full relative overflow-hidden"
+                                            className="group bg-white border border-slate-200 rounded-2xl p-2 shadow-sm hover:shadow-xl hover:border-indigo-500 transition-all flex flex-col justify-between h-full relative overflow-hidden"
                                         >
                                             {/* Cabecera del Grado */}
                                             <div>
-                                                <div className="flex justify-between items-start gap-2 mb-2">
+                                                <div className="flex justify-between items-start gap-1 mb-1">
                                                     <div>
                                                         <h5 className="text-xs font-black text-slate-900 uppercase tracking-tight truncate leading-tight">
                                                             {
                                                                 grade.nombre_del_grado
-                                                            }
-                                                        </h5>
-                                                        <span className="inline-block bg-slate-100 text-slate-600 text-[10px] font-extrabold px-2 py-0.5 rounded-md mt-1">
-                                                            Sección:{" "}
+                                                            }{" "}
                                                             {grade.seccion}
-                                                        </span>
+                                                        </h5>
+                                                        <p className="text-[10px] text-slate-500">
+                                                            {
+                                                                grade.docente
+                                                            }
+                                                        </p>
                                                     </div>
-                                                    <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                                                    <div className="w-4 h-4 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
                                                         <GraduationCap
                                                             size={16}
                                                         />
@@ -175,22 +148,16 @@ export default function RegistroEstudiantil({
                                                 {/* Desglose por Género */}
                                                 <div className="grid grid-cols-2 gap-2 my-3 bg-slate-50 p-2 rounded-xl border border-slate-100">
                                                     <div className="flex items-center justify-center gap-1.5">
-                                                        <Mars
-                                                            size={13}
-                                                            className="text-blue-500"
-                                                        />
                                                         <span className="text-[11px] font-black text-slate-700">
+                                                            V:{" "}
                                                             {
                                                                 grade.male_students
                                                             }
                                                         </span>
                                                     </div>
                                                     <div className="flex items-center justify-center gap-1.5 border-l border-slate-200">
-                                                        <Venus
-                                                            size={13}
-                                                            className="text-rose-500"
-                                                        />
                                                         <span className="text-[11px] font-black text-slate-700">
+                                                            H:{" "}
                                                             {
                                                                 grade.female_students
                                                             }

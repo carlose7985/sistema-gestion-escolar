@@ -654,21 +654,21 @@ export default function CrearEstudiante({
                                     value={data.alergico}
                                     onChange={(e) => {
                                         setData(
-                                            "alergico",
-                                            formatFirstLetter(e.target.value),
+                                            "alergico", (e.target.value),
                                         );
                                         clearErrors("alergico");
                                     }}
                                     error={errors.alergico}
                                 />
+
+                                
                             </div>
                             <Field
                                 label="Enfermedades"
                                 value={data.enfermedades}
                                 onChange={(e) => {
                                     setData(
-                                        "enfermedades",
-                                        formatFirstLetter(e.target.value),
+                                        "enfermedades", (e.target.value),
                                     );
                                     clearErrors("enfermedades");
                                 }}
@@ -679,8 +679,7 @@ export default function CrearEstudiante({
                                 value={data.tratamiento_medico}
                                 onChange={(e) => {
                                     setData(
-                                        "tratamiento_medico",
-                                        formatFirstLetter(e.target.value),
+                                        "tratamiento_medico",(e.target.value),
                                     );
                                     clearErrors("tratamiento_medico");
                                 }}

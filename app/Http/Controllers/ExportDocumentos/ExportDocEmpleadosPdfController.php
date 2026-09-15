@@ -4,6 +4,8 @@ namespace App\Http\Controllers\ExportDocumentos;
 
 use App\Exports\EmpleadosMultiSheetExport;
 use App\Http\Controllers\Controller;
+use App\Models\AccionPago;
+use App\Models\AccionTipo;
 use App\Models\AsistenciaEmpleado;
 use App\Models\Cargo;
 use App\Models\CartaAceptacion;
@@ -40,7 +42,7 @@ class ExportDocEmpleadosPdfController extends Controller
         $hasta = $request->query('hasta');
         $filter = $request->query('filter');
         $tipoPermiso = $request->tipoPermiso;
-       // dd($request->query());
+        // dd($request->query());
         switch ($type) {
             case 'nomina-general-excell':
                 return Excel::download(new EmpleadosMultiSheetExport(''), 'Listado General Empleados.xlsx');
@@ -64,6 +66,15 @@ class ExportDocEmpleadosPdfController extends Controller
             case 'listado-de-firmas':
 
                 return $this->listadodeFirmas();
+
+            case 'listado-de-firmas-acciones':
+
+                return $this->listadodeFirmasAcciones($request);
+
+            case 'reporte-pagos-acciones':
+
+                return $this->imprimirReportePagoAcciones($request);
+
 
             case 'listado-de-cumpleaneros':
 
@@ -240,7 +251,7 @@ class ExportDocEmpleadosPdfController extends Controller
             'reporte',
             'totalesPorFuncion',
             'totalesGenerales',
-            'empleados',            
+            'empleados',
             'contar_las_funciones',
             'institucion',
             'logoDocumento',
@@ -606,17 +617,224 @@ class ExportDocEmpleadosPdfController extends Controller
             : public_path('img/noImgdoc.jpeg');
 
 
-        $empleado = EmpleadoActivo::orderByRaw("FIELD(funcion_en_el_plantel, 'Director', 'Subdirector','Coordinador','Docente de aula',
+        $empleados = EmpleadoActivo::orderByRaw("FIELD(funcion_en_el_plantel, 'Director', 'Subdirector','Coordinador','Docente de aula',
               'Docente Especialista', 'Secretaria(o)','Aseador(a)','Cocinera(o)','Vigilante') ASC")->get();
         $meses = Carbon::now()->format('m');
         $mes = Carbon::now()->translatedFormat('F');
 
-        $pdf = PDF::loadView('pdfs.empleados.listado-de-firmas-pdf', compact('empleado', 'suma', 'mes', 'logoDocumento', 'logoInstitucion'));
+        $pdf = PDF::loadView('pdfs.empleados.listado-de-firmas-pdf', compact('empleados', 'suma', 'mes', 'logoDocumento', 'logoInstitucion'));
         $pdf->setPaper('Letter', 'portrait');
 
         return $pdf->stream('Listado de firmas' . '.pdf');  // visualizar
 
     }
+
+
+    // public function listadodeFirmasAcciones()
+    // {
+    //     Carbon::setLocale('es');
+    //     $suma = 1;
+    //     $logo = Logo::first();
+    //     // Lógica para Logo Documento (Header)
+    //     $logoDocumento = ($logo && $logo->logo_documentos && Storage::disk('public')->exists($logo->logo_documentos))
+    //         ? storage_path('app/public/' . $logo->logo_documentos)
+    //         : public_path('img/noImgdoc.jpeg');
+
+    //     // Lógica para Logo Institución (Ej. en otro lugar del PDF)
+    //     $logoInstitucion = ($logo && $logo->logo_institucion && Storage::disk('public')->exists($logo->logo_institucion))
+    //         ? storage_path('app/public/' . $logo->logo_institucion)
+    //         : public_path('img/noImgdoc.jpeg');
+
+
+    //     // $empleado = EmpleadoActivo::orderByRaw("FIELD(funcion_en_el_plantel, 'Director', 'Subdirector','Coordinador','Docente de aula',
+    //     //       'Docente Especialista', 'Secretaria(o)','Aseador(a)','Cocinera(o)','Vigilante') ASC")->get();
+    //     $meses = Carbon::now()->format('m');
+    //     $mes = Carbon::now()->translatedFormat('F');
+
+    //     // Obtener todos los AccionPago con sus relaciones
+    //     $accionesPago = AccionPago::with('empleado')
+    //         ->orderBy('empleado_id') // Orden temporal para agrupar
+    //         ->get();
+
+    //     // Extraer empleados únicos y ordenarlos por jerarquía
+    //     $empleados = $accionesPago
+    //         ->pluck('empleado') // Obtener solo los empleados
+    //         ->unique('id') // Eliminar duplicados por ID
+    //         ->filter() // Eliminar valores null
+    //         ->sortBy(function ($empleado) {
+    //             // Definir el orden jerárquico
+    //             $jerarquia = [
+    //                 'Director' => 1,
+    //                 'Subdirector' => 2,
+    //                 'Coordinador' => 3,
+    //                 'Docente de aula' => 4,
+    //                 'Docente Especialista' => 5,
+    //                 'Secretaria(o)' => 6,
+    //                 'Aseador(a)' => 7,
+    //                 'Cocinera(o)' => 8,
+    //                 'Vigilante' => 9,
+    //             ];
+
+    //             return $jerarquia[$empleado->funcion_en_el_plantel] ?? 999;
+    //         })
+    //         ->values(); // Reindexar el array
+
+    //     // dd($empleados);
+
+
+    //     $pdf = PDF::loadView('pdfs.empleados.listado-de-firmas-acciones-pdf', compact('empleados', 'suma', 'mes', 'logoDocumento', 'logoInstitucion'));
+    //     $pdf->setPaper('Letter', 'portrait');
+
+    //     return $pdf->stream('Listado de firmas' . '.pdf');  // visualizar
+
+    // }
+
+    // public function imprimirReportePagoAcciones(int $empleadoId)
+    // {
+    //     $accion = AccionTipo::findOrFail($empleadoId);
+
+    //     // Obtenemos los pagos con los datos del empleado
+    //     $pagos = AccionPago::where('accion_tipo_id', $empleadoId)
+    //         ->with('empleado:id,nombres,apellidos,cedula')
+    //         ->get();
+
+    //     $data = [
+    //         'accion' => $accion,
+    //         'pagos' => $pagos,
+    //         'institucion' => Institucion::first(),
+    //         'totalRecaudado' => $pagos->sum('monto_item'),
+    //         'fechaReporte' => now()->format('Y-m-d H:i:s'),
+    //     ];
+
+    //     // Generar PDF
+    //     $pdf = PDF::loadView('pdfs.empleados.reporte-pagos-acciones', $data);
+
+    //     // Configurar tamaño de página carta horizontal
+    //     $pdf->setPaper('letter', 'landscape');
+
+    //     // O si prefieres mostrar en el navegador:
+    //      return $pdf->stream('reporte_caja_' . $accion->nombre . '.pdf');
+    // }
+
+
+    public function listadodeFirmasAcciones(Request $request)
+    {
+        $accionId = $request->input('empleadoId');
+
+        if (!$accionId) {
+            return redirect()->back()->with('error', 'Debe seleccionar una actividad');
+        }
+
+        $accion = AccionTipo::findOrFail($accionId);
+
+        Carbon::setLocale('es');
+        $suma = 1;
+        $logo = Logo::first();
+
+        // Lógica para Logo Documento (Header)
+        $logoDocumento = ($logo && $logo->logo_documentos && Storage::disk('public')->exists($logo->logo_documentos))
+            ? storage_path('app/public/' . $logo->logo_documentos)
+            : public_path('img/noImgdoc.jpeg');
+
+        // Lógica para Logo Institución
+        $logoInstitucion = ($logo && $logo->logo_institucion && Storage::disk('public')->exists($logo->logo_institucion))
+            ? storage_path('app/public/' . $logo->logo_institucion)
+            : public_path('img/noImgdoc.jpeg');
+
+        $mes = Carbon::now()->translatedFormat('F');
+
+        // Obtener EMPLEADOS ÚNICOS que han pagado esta actividad
+        $empleados = EmpleadoActivo::whereHas('pagos', function ($query) use ($accionId) {
+            $query->where('accion_tipo_id', $accionId);
+        })
+            ->with(['pagos' => function ($query) use ($accionId) {
+                $query->where('accion_tipo_id', $accionId);
+            }])
+            ->get()
+            ->sortBy(function ($empleado) {
+                $jerarquia = [
+                    'Director' => 1,
+                    'Subdirector' => 2,
+                    'Coordinador' => 3,
+                    'Docente de aula' => 4,
+                    'Docente Especialista' => 5,
+                    'Secretaria(o)' => 6,
+                    'Aseador(a)' => 7,
+                    'Cocinera(o)' => 8,
+                    'Vigilante' => 9,
+                ];
+                return $jerarquia[$empleado->funcion_en_el_plantel] ?? 999;
+            })
+            ->values();
+
+        $pdf = PDF::loadView('pdfs.empleados.listado-de-firmas-acciones-pdf', [
+            'empleados' => $empleados,
+            'suma' => $suma,
+            'mes' => $mes,
+            'logoDocumento' => $logoDocumento,
+            'logoInstitucion' => $logoInstitucion,
+            'accion' => $accion, // Pasamos la actividad para mostrar su nombre
+        ]);
+
+        $pdf->setPaper('Letter', 'portrait');
+
+        return $pdf->stream('Listado_de_firmas_' . $accion->nombre . '.pdf');
+    }
+
+    /**
+     * Imprime el reporte de pagos para una actividad específica
+     */
+    public function imprimirReportePagoAcciones(Request $request)
+    {
+        $accionId = $request->input('empleadoId');
+
+        if (!$accionId) {
+            return redirect()->back()->with('error', 'Debe seleccionar una actividad');
+        }
+
+        $accion = AccionTipo::findOrFail($accionId);
+
+        // Obtenemos los pagos con los datos del empleado
+        $pagos = AccionPago::where('accion_tipo_id', $accionId)
+            ->with('empleado:id,nombres,apellidos,cedula')
+            ->get();
+
+        // Agrupamos por empleado para mostrar un solo registro por empleado
+        $empleadosConPagos = $pagos->groupBy('empleado_id')->map(function ($pagosEmpleado) {
+            $empleado = $pagosEmpleado->first()->empleado;
+
+            // Si tiene múltiples pagos, combinamos los métodos
+            $metodos = $pagosEmpleado->pluck('metodo_item')->unique()->implode(' + ');
+            $referencias = $pagosEmpleado->pluck('ref_item')->filter()->implode(' / ');
+            $montoTotal = $pagosEmpleado->sum('monto_item');
+            $fechaPago = $pagosEmpleado->first()->fecha_pago;
+
+            return (object) [
+                'empleado' => $empleado,
+                'metodos' => $metodos,
+                'referencias' => $referencias,
+                'monto_total' => $montoTotal,
+                'fecha_pago' => $fechaPago,
+            ];
+        })->values();
+
+        $data = [
+            'accion' => $accion,
+            'empleadosConPagos' => $empleadosConPagos,
+            'totalEmpleados' => $empleadosConPagos->count(),
+            'totalRecaudado' => $pagos->sum('monto_item'),
+            'fechaReporte' => now()->format('Y-m-d H:i:s'),
+        ];
+
+        // Generar PDF
+        $pdf = PDF::loadView('pdfs.empleados.reporte-pagos-acciones', $data);
+
+        // Configurar tamaño de página carta horizontal
+        $pdf->setPaper('letter', 'landscape');
+
+        return $pdf->stream('reporte_caja_' . $accion->nombre . '.pdf');
+    }
+
 
     public function listadodeCumpleaneros()
     {
@@ -1412,7 +1630,7 @@ class ExportDocEmpleadosPdfController extends Controller
 
 
     // --- REPORTE GENERAL (Varios empleados) ---
-    public function reporteGeneralPermisosPdf(string $tipo, string $desde, string $hasta, string $filter )
+    public function reporteGeneralPermisosPdf(string $tipo, string $desde, string $hasta, string $filter)
     {
         // 1. Iniciamos la consulta en la tabla unificada 'permisos'
         $query = \App\Models\Permiso::with('empleado')
@@ -1434,7 +1652,7 @@ class ExportDocEmpleadosPdfController extends Controller
             'desde',
             'hasta',
             'tipo',
-           
+
         ));
 
         $pdf->setPaper('Letter', 'landscape');
@@ -1466,7 +1684,7 @@ class ExportDocEmpleadosPdfController extends Controller
             'desde',
             'hasta',
             'tipo',
-           
+
         ));
 
         $pdf->setPaper('Letter', 'portrait');

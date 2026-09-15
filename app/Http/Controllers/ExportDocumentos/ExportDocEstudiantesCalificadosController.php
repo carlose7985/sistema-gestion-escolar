@@ -5,7 +5,6 @@ namespace App\Http\Controllers\ExportDocumentos;
 use App\Helpers\PeriodoHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Estudiante;
-use App\Models\EstudianteGraduado;
 use App\Models\EstudiantePeriodo;
 use App\Models\FechaEntregaDocumento;
 use App\Models\Grado;
@@ -489,46 +488,46 @@ class ExportDocEstudiantesCalificadosController extends Controller
     }
 
     //falta este 
-    public function ConstanciaAprobadosGraduadosEspecial(int $studentId, $status, $section)
-    {
-        Carbon::setLocale('es');
-        $logo = Logo::first();
-        $logoDocumento = $logo ? Storage::disk('public')->path($logo->logo_documentos) : public_path('img/noImgdoc.jpeg');
+    // public function ConstanciaAprobadosGraduadosEspecial(int $studentId, $status, $section)
+    // {
+    //     Carbon::setLocale('es');
+    //     $logo = Logo::first();
+    //     $logoDocumento = $logo ? Storage::disk('public')->path($logo->logo_documentos) : public_path('img/noImgdoc.jpeg');
 
-        $title = 'Constancias';
-        $title_1 = 'Certificado de educación primaria';
-        $institucion = Institucion::orderBy('nombre_de_la_institucion', 'asc')->find(1);
+    //     $title = 'Constancias';
+    //     $title_1 = 'Certificado de educación primaria';
+    //     $institucion = Institucion::orderBy('nombre_de_la_institucion', 'asc')->find(1);
 
-        // 1. Buscamos el estudiante en la tabla de graduados
-        $estudiantes = EstudianteGraduado::find($studentId);
+    //     // 1. Buscamos el estudiante en la tabla de graduados
+    //     $estudiantes = EstudianteGraduado::find($studentId);
 
-        // Si no existe el estudiante, podemos retornar un error o redirigir
-        if (!$estudiantes) {
-            return back()->with('error', 'Estudiante no encontrado');
-        }
+    //     // Si no existe el estudiante, podemos retornar un error o redirigir
+    //     if (!$estudiantes) {
+    //         return back()->with('error', 'Estudiante no encontrado');
+    //     }
 
-        // 2. Definimos la fecha actual (Para graduados suele ser la fecha de impresión)
-        $dia = Carbon::now()->format('d');
-        $mes = Carbon::now()->translatedFormat('F');
-        $aho = Carbon::now()->format('Y');
+    //     // 2. Definimos la fecha actual (Para graduados suele ser la fecha de impresión)
+    //     $dia = Carbon::now()->format('d');
+    //     $mes = Carbon::now()->translatedFormat('F');
+    //     $aho = Carbon::now()->format('Y');
 
-        // 3. Generamos el PDF con la vista específica que mencionaste
-        $pdf = Pdf::loadView('PDFS.estudiantesPDF.constancia-de-promovido-graduado', compact(
-            'logoDocumento',
-            'estudiantes',
-            'institucion',
-            'dia',
-            'title',
-            'title_1',
-            'section',
-            'mes',
-            'aho'
-        ));
+    //     // 3. Generamos el PDF con la vista específica que mencionaste
+    //     $pdf = Pdf::loadView('PDFS.estudiantesPDF.constancia-de-promovido-graduado', compact(
+    //         'logoDocumento',
+    //         'estudiantes',
+    //         'institucion',
+    //         'dia',
+    //         'title',
+    //         'title_1',
+    //         'section',
+    //         'mes',
+    //         'aho'
+    //     ));
 
-        $pdf->setPaper("Letter", "portrait");
+    //     $pdf->setPaper("Letter", "portrait");
 
-        return $pdf->stream('Certificado_' . $estudiantes->name . '_' . $estudiantes->apellido . '.pdf');
-    }
+    //     return $pdf->stream('Certificado_' . $estudiantes->name . '_' . $estudiantes->apellido . '.pdf');
+    // }
 
     public function ConstanciaReprobados(Request $request)
     {

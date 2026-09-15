@@ -38,7 +38,7 @@ class GestionDeCuposController extends Controller
                 });
             })
             ->orderBy('id', 'desc')
-            ->paginate(6)
+            ->paginate(200)
             ->withQueryString();
 
         return Inertia::render('Estudiantes/GestionDeCupos/Index', [

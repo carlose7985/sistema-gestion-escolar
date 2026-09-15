@@ -172,6 +172,8 @@ export default function SeleccionaResponsable({ grado_id, status }) {
             onSuccess: () => {
                 setShowRegisterModal(false);
                 buscarResponsable(formNew.data.cedula_r, registeringFor);
+                 formNew.reset();
+                 formNew.clearErrors();
             },
         });
     };
@@ -461,7 +463,7 @@ export default function SeleccionaResponsable({ grado_id, status }) {
                     )}
                 </div>
 
-                {/* MODAL REGISTRO NUEVO */}
+                {/* MODAL REGISTRO NUEVO RESPONSABLE */}
                 {showRegisterModal && (
                     <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
                         <div className="bg-white rounded-[3rem] w-full max-w-2xl shadow-3xl animate-in zoom-in-95 duration-300 border border-white p-10">

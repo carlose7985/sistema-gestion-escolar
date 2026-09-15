@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre'); // Ej: Combo Marzo 2025
             $table->decimal('costo_base', 10, 2); // Ej: 6000
+            $table->decimal('costo_adicional', 10, 2); // Ej: 6000
             $table->boolean('status')->default(1);
             $table->boolean('activo')->default(true);
             $table->timestamps();

@@ -142,10 +142,11 @@ class EmpleadosActivosController extends Controller
     {
         $data = $request->validated();
 
-        // Si tu columna es string, los unimos por comas
+        // Si es un arreglo, lo guardamos en formato JSON
         if (is_array($request->area_de_trabajo)) {
-            $data['area_de_trabajo'] = implode(', ', $request->area_de_trabajo);
+            $data['area_de_trabajo'] = json_encode($request->area_de_trabajo);
         }
+
         $data['status_de_actualizacion'] = 'Si';
         $data['situacion_laboral'] = 'Activo';
         $data['fecha_registro'] = now()->format('Y-m-d');
@@ -191,6 +192,10 @@ class EmpleadosActivosController extends Controller
     {
         $empleado = EmpleadoActivo::findOrFail($id);
 
+        // Si es un arreglo, lo guardamos en formato JSON
+        if (is_array($request->area_de_trabajo)) {
+            $data['area_de_trabajo'] = json_encode($request->area_de_trabajo);
+        }
         // 1. Obtenemos los datos ya validados por el FormRequest
         $data = $request->validated();
         $data['status_de_actualizacion'] = 'Si';
@@ -441,7 +446,7 @@ class EmpleadosActivosController extends Controller
 
     public function reportesIndex()
     {
-        return Inertia::render('Empleados/EmpleadosActivos/LogImpresiones', [
+        return Inertia::render('Empleados/CentroDeImpreciones/Index', [
             'cargos' => \App\Models\Cargo::orderBy('id')->get(),
             'filters' => request()->all(['search', 'tipo_id']),
         ]);

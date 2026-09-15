@@ -43,14 +43,14 @@ const modules = [
         ],
     },
 
-    {
-        title: "CENTRO DE IMPRESIONES",
-        subtitle: "Documentaciones, clasificaciones",
-        icon: "FileSpreadsheet",
-        color: "rose",
-        route: "empleados.activos.centro.impresiones",
-        items: ["Impresión de Documentos", "Nominas", "Listados por Cargo"],
-    },
+    // {
+    //     title: "CENTRO DE IMPRESIONES",
+    //     subtitle: "Documentaciones, clasificaciones",
+    //     icon: "FileSpreadsheet",
+    //     color: "rose",
+    //     route: "empleados.activos.centro.impresiones",
+    //     items: ["Impresión de Documentos", "Nominas", "Listados por Cargo"],
+    // },
     // {
     //     title: "REPORTE ASISTENCIA EXCELL",
     //     subtitle: "Reporte mensual",
@@ -135,7 +135,7 @@ export default function Index() {
                 icon="UserPlus"
                 showSearch={false}
             >
-                <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+                <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                     {modules.map((mod, idx) => {
                         const IconComponent = Icons[mod.icon];
                         const style = neonStyles[mod.color];

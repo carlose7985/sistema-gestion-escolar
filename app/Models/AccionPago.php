@@ -23,7 +23,9 @@ class AccionPago extends Model
 
     public function empleado()
     {
-        return $this->belongsTo(EmpleadoActivo::class);
+        return $this->belongsTo(EmpleadoActivo::class)
+            ->orderByRaw("FIELD(funcion_en_el_plantel, 'Director', 'Subdirector','Coordinador','Docente de aula',
+                      'Docente Especialista', 'Secretaria(o)','Aseador(a)','Cocinera(o)','Vigilante') ASC");
     }
 
     public function tipo()

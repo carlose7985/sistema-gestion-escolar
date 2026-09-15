@@ -85,7 +85,7 @@
         <div class="header" style="position: relative; text-align: center; margin-bottom: 20px;">
             {{-- Logos --}}
             <div style="position: absolute; left: 0; top: 3%; transform: translateY(-50%); opacity: 0.5;">
-                <img src="{{ $logoDocumento }}" style="height: 60px; width: 350px;">
+                <img src="{{ $logoDocumento }}" style="height: 60px; width: 250px;">
             </div>
             <div style="position: absolute; right: 0; top: 3%; transform: translateY(-50%); opacity: 0.5;">
                 <img src="{{ $logoInstitucion }}" style="max-height: 55px; max-width: 70px;">
@@ -98,8 +98,9 @@
                     <span>{{ $institucion->nombre_de_la_institucion ?? '' }}</span>
                 </div>
                 <div class="subtitle">
-                    {{ $grado->nombre_del_grado }} - SECCIÓN "{{ $grado->seccion }}"
+                    {{ $grado->nombre_del_grado }} "{{ $grado->seccion }}" - DOC. {{ $grado->docente }}
                 </div>
+               
                 <div style="font-size: 12pt; font-weight: bold; margin-top:10px; text-transform: uppercase;">
                     {{ $tituloReporte }}
                 </div>
@@ -133,7 +134,7 @@
                     @foreach($columnas as $col)
                     <td class="{{ in_array(basename($col['campo']), $camposCentrados) ? 'text-center' : 'text-left' }}">
                         @if($col['campo'] == 'full_name')
-                        {{ $est->apellido }} {{ $est->name }}
+                        {{ $est->name }} {{ $est->apellido }}
                         @elseif($col['campo'] == 'edad')
                         {{ $est->fecha_de_nacimiento ? \Carbon\Carbon::parse($est->fecha_de_nacimiento)->age : 'S/D' }}
                         @elseif(str_starts_with($col['campo'], 'virtual_'))

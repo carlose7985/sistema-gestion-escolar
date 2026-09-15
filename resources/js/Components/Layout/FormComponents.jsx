@@ -413,7 +413,7 @@ export function MultiSelectField({
                         <option value="" disabled></option>
                         <option
                             value="+ Agregar nueva"
-                            className="font-black text-blue-600"
+                            className="font-bold text-gray-900"
                         >
                             + NUEVA ÁREA
                         </option>
@@ -422,7 +422,7 @@ export function MultiSelectField({
                                 key={i}
                                 value={opt}
                                 disabled={value.includes(opt)}
-                                className="text-xs"
+                                className="text-xs font-bold text-gray-900"
                             >
                                 {opt}
                             </option>
@@ -478,18 +478,36 @@ export function MultiSelectField({
  */
 export function SelectField({
     label,
-    name, // 🔥 Añadir name como prop
+    name,
     value,
     onChange,
     optionSelecName,
-    disabled,
+    disabled = false,
     options = [],
     required = false,
     error,
+    placeholder = "Seleccione...",
 }) {
     const [isOpen, setIsOpen] = useState(false);
+    const [dropUp, setDropUp] = useState(false);
     const containerRef = useRef(null);
 
+    // Calcular si se despliega hacia arriba o abajo según el viewport
+    useEffect(() => {
+        if (isOpen && containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect();
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const dropdownHeight = 136; // Altura aproximada para 3 opciones + paddings
+
+            if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
+                setDropUp(true);
+            } else {
+                setDropUp(false);
+            }
+        }
+    }, [isOpen]);
+
+    // Cerrar al hacer click fuera o presionar Escape
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
@@ -499,9 +517,17 @@ export function SelectField({
                 setIsOpen(false);
             }
         };
+
+        const handleKeyDown = (event) => {
+            if (event.key === "Escape") setIsOpen(false);
+        };
+
         document.addEventListener("mousedown", handleClickOutside);
-        return () =>
+        document.addEventListener("keydown", handleKeyDown);
+        return () => {
             document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("keydown", handleKeyDown);
+        };
     }, []);
 
     const selectedOption = options.find((opt) => {
@@ -513,10 +539,9 @@ export function SelectField({
         ? typeof selectedOption === "object"
             ? selectedOption.l
             : selectedOption
-        : optionSelecName || "Seleccione...";
+        : optionSelecName || placeholder;
 
     const handleSelect = (val) => {
-        // 🔥 Crear un evento sintético completo
         const syntheticEvent = {
             target: {
                 name: name,
@@ -524,74 +549,95 @@ export function SelectField({
             },
         };
 
-        if (onChange) {
-            onChange(syntheticEvent);
-        }
+        if (onChange) onChange(syntheticEvent);
         setIsOpen(false);
     };
 
     return (
         <div className="flex flex-col gap-1 w-full relative" ref={containerRef}>
-            <label
-                className={`text-[10px] font-black uppercase tracking-tighter ml-1 ${error ? "text-rose-500" : "text-gray-800"}`}
-            >
-                {label} {required && <span className="text-rose-500">*</span>}
-            </label>
+            {label && (
+                <label
+                    className={`text-[10px] font-black uppercase tracking-tighter ml-1 ${error ? "text-rose-500" : "text-gray-800"}`}
+                >
+                    {label}{" "}
+                    {required && <span className="text-rose-500">*</span>}
+                </label>
+            )}
 
-            <div
-                onClick={() => !disabled && setIsOpen(!isOpen)}
+            <button
+                type="button"
+                disabled={disabled}
+                onClick={() => setIsOpen(!isOpen)}
                 className={`
-                    flex items-center justify-between cursor-pointer
-                    w-full bg-white border rounded-xl px-3 py-2.5 text-xs font-bold transition-all
-                    ${error ? "border-rose-500 ring-2 ring-rose-500/10" : "border-gray-400"}
-                    ${isOpen ? "ring-2 ring-indigo-500/20 border-indigo-500" : ""}
-                    ${disabled ? "bg-slate-50 opacity-60 cursor-not-allowed" : "hover:border-gray-500"}
+                    flex items-center justify-between w-full bg-transparent border rounded-xl px-3 py-2.5 text-xs font-bold transition-all outline-none text-left
+                    ${
+                        error
+                            ? "border-rose-500 ring-2 ring-rose-500/10 text-rose-900"
+                            : isOpen
+                              ? "border-blue-500 ring-2 ring-blue-500/10"
+                              : "border-gray-400 hover:border-gray-500"
+                    }
+                    ${disabled ? "opacity-60 cursor-not-allowed bg-gray-100" : "cursor-pointer"}
                 `}
             >
-                <span className={value ? "text-slate-700" : "text-slate-400"}>
+                <span
+                    className={`truncate ${value ? "text-slate-700" : "text-slate-400 font-medium italic"}`}
+                >
                     {displayLabel}
                 </span>
                 <ChevronDown
                     size={14}
-                    className={`text-slate-500 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                    className={`text-slate-500 transition-transform duration-200 shrink-0 ml-2 ${isOpen ? "rotate-180 text-blue-500" : ""}`}
                 />
-            </div>
+            </button>
 
             <AnimatePresence>
                 {isOpen && (
                     <motion.ul
-                        initial={{ opacity: 0, y: -10 }}
+                        initial={{ opacity: 0, y: dropUp ? 4 : -4 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
+                        exit={{ opacity: 0, y: dropUp ? 4 : -4 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute left-0 right-0 z-[9999] bg-gray-200 border border-slate-200 mt-14 p-1.5 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.12)] max-h-60 overflow-y-auto"
-                        style={{ top: "0px" }}
+                        className={`
+                            absolute left-0 right-0 z-50 bg-white border border-gray-300 p-1.5 rounded-xl shadow-lg
+                            max-h-[116px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300
+                            ${dropUp ? "bottom-full mb-1" : "top-full mt-1"}
+                        `}
                     >
-                        {options.map((opt, i) => {
-                            const v = typeof opt === "object" ? opt.v : opt;
-                            const l = typeof opt === "object" ? opt.l : opt;
-                            const isSelected = v == value;
+                        {options.length === 0 ? (
+                            <li className="px-3 py-2 text-xs font-medium text-slate-400 italic text-center">
+                                Sin opciones
+                            </li>
+                        ) : (
+                            options.map((opt, i) => {
+                                const v = typeof opt === "object" ? opt.v : opt;
+                                const l = typeof opt === "object" ? opt.l : opt;
+                                const isSelected = v == value;
 
-                            return (
-                                <li
-                                    key={i}
-                                    onClick={() => handleSelect(v)}
-                                    className={`
-                                        flex items-center justify-between
-                                        px-4 py-2.5 text-xs font-bold cursor-pointer transition-all
-                                        rounded-sm mb-1 last:mb-0
-                                        ${
-                                            isSelected
-                                                ? "bg-indigo-600 text-white"
-                                                : "text-slate-600 hover:bg-slate-300 hover:text-indigo-700"
-                                        }
-                                    `}
-                                >
-                                    <span>{l}</span>
-                                    {isSelected && <Check size={14} />}
-                                </li>
-                            );
-                        })}
+                                return (
+                                    <li
+                                        key={i}
+                                        onClick={() => handleSelect(v)}
+                                        className={`
+                                            flex items-center justify-between px-3 py-2 text-xs font-bold rounded-lg cursor-pointer transition-colors duration-150 mb-0.5 last:mb-0
+                                            ${
+                                                isSelected
+                                                    ? "bg-blue-50 text-blue-600"
+                                                    : "text-slate-700 hover:bg-slate-100 hover:text-blue-600"
+                                            }
+                                        `}
+                                    >
+                                        <span className="truncate">{l}</span>
+                                        {isSelected && (
+                                            <Check
+                                                size={14}
+                                                className="text-blue-600 shrink-0 ml-2"
+                                            />
+                                        )}
+                                    </li>
+                                );
+                            })
+                        )}
                     </motion.ul>
                 )}
             </AnimatePresence>

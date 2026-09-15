@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Listado de Firmas</title>
+    <title>Listado de Firmas - {{ $accion->nombre }}</title>
     <style>
         @page {
             size: letter portrait;
@@ -32,7 +32,13 @@
             font-size: 12px;
             margin-bottom: 15px;
             border: 1px dashed #64748b;
-            padding: 5px;
+            padding: 8px;
+        }
+
+        .control-box .actividad {
+            color: #1d4ed8;
+            font-size: 14px;
+            text-decoration: underline;
         }
 
         /* Tabla principal */
@@ -64,6 +70,10 @@
         .text-left {
             text-align: left;
         }
+
+        .font-bold {
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -81,7 +91,9 @@
     </table>
 
     <div class="control-box">
-        CONTROL PARA: __________________________________________________________________________
+        CONTROL PARA: <span class="actividad">{{ $accion->nombre }}</span>
+        <br>
+        <span style="font-size: 10px; color: #64748b;">Mes: {{ $mes }}</span>
     </div>
 
     <table>
@@ -101,7 +113,7 @@
                 <td class="text-center" style="height: 50px; vertical-align: middle; font-weight: bold;">{{ $suma++ }}</td>
                 <td style="vertical-align: middle; font-weight: bold;">{{ $emp->nombres }} {{ $emp->apellidos }}</td>
                 <td class="text-center" style="vertical-align: middle;">{{ $emp->cedula }}</td>
-                <td class="text-center" style="vertical-align: middle;">{{ $emp->tipo_de_personal }}</td>
+                <td class="text-center" style="vertical-align: middle;">{{ $emp->funcion_en_el_plantel }}</td>
                 <td></td>
                 <td></td>
             </tr>

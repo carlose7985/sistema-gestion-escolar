@@ -51,7 +51,7 @@ class StoreEmpleadoActivoRequest extends FormRequest
             'funcion_en_el_plantel' => ['required', 'string', 'max:255'],
             'area_de_trabajo' => 'required|array',
             'area_de_trabajo.*' => 'string|max:255',
-             'fecha_registro' => ['nullable', 'date'], // Se autocompleta
+            'fecha_registro' => ['nullable', 'date'], // Se autocompleta
         ];
     }
 

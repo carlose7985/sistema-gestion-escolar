@@ -43,7 +43,7 @@ export default function ChequearPermisos({
 
     const guardarRenovacion = (e) => {
         e.preventDefault();
-        post(route("empleados.inactivos.permisos.renovar.permiso"), {
+        post(route("empleados.inactivos.permisos.renovar"), {
             preserveScroll: true,
             onSuccess: () => {
                 setIsModalOpen(false);
@@ -132,7 +132,7 @@ export default function ChequearPermisos({
 
               // Hacer la petición
               router.post(
-                  route("empleados.inactivos.permisos.marcar.vencido"),
+                  route("empleados.inactivos.permisos.vencer"),
                   {
                       empleado_id: permiso.empleado_id,
                       permiso_id: permiso.permiso_id,

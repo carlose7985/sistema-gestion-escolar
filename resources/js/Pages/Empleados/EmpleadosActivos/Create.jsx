@@ -80,7 +80,7 @@ export default function Create({ cargos, areas }) {
         setIsSavingArea(true); // Encendemos el spinner
 
         router.post(
-            route("areas.storeFast"),
+            route("settings.areas.storeFast"),
             {
                 nombre_del_area: newAreaName,
             },

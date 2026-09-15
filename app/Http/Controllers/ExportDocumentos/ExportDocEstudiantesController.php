@@ -464,24 +464,26 @@ class ExportDocEstudiantesController extends Controller
             ->orderBy('id')
             ->get();
 
-        // 3. Generar días hábiles (Lunes a Viernes)
-        $diasHabiles = [];
+        // 3. Generar días hábiles agrupados por semana
         $fechaInicio = Carbon::createFromDate($year, $month, 1);
         $diasEnMes = $fechaInicio->daysInMonth;
 
+        $diasHabilesCollection = collect();
+
         for ($i = 1; $i <= $diasEnMes; $i++) {
             $fechaActual = Carbon::createFromDate($year, $month, $i);
-            // 0 = Domingo, 6 = Sábado
+
             if (!$fechaActual->isWeekend()) {
-                $diasHabiles[] = [
-                    'nombre' => $fechaActual->translatedFormat('l'), // Ejemplo: lunes
-                    'fecha' => $fechaActual->format('d/m/Y')         // Ejemplo: 01/05/2024
-                ];
+                $diasHabilesCollection->push([
+                    'semana' => $fechaActual->weekOfYear, // Agrupa por la semana del año
+                    'nombre' => $fechaActual->translatedFormat('l'),
+                    'fecha'  => $fechaActual->format('d/m/Y')
+                ]);
             }
         }
 
-        // Usamos chunks de 5 para que la vista Blade los agrupe por filas si es necesario
-        $diasAgrupados = array_chunk($diasHabiles, 5);
+        // Agrupamos por semana y convertimos a array para el PDF
+        $diasAgrupados = $diasHabilesCollection->groupBy('semana')->values()->toArray();
 
         $pdf = Pdf::loadView('pdfs.estudiantesPDF.estadistica_diaria_manual', [
             'grados' => $grados,

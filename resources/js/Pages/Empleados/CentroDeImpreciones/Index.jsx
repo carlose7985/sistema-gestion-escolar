@@ -27,7 +27,7 @@ export default function Index({ cargos }) {
                 icon="Printer"
                 showSearch={false}
                 actions={
-                    <Link href={route("empleados.activos.index")}>
+                    <Link href={route("empleados.acciones.index")}>
                         <Button>
                             <Icons.ArrowLeftCircle size={18} /> VOLVER 
                         </Button>

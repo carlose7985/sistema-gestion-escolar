@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AccionTipo extends Model
 {
-    protected $fillable = ['nombre', 'costo_base', 'costo_transporte', 'activo'];
+    protected $fillable = ['nombre', 'costo_base', 'costo_adicional', 'status', 'activo'];
 
     protected $casts = [
         'costo_base' => 'decimal:2',

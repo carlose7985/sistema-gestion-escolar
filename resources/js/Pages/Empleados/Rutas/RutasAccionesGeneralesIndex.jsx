@@ -50,11 +50,12 @@ const modules = [
         route: "empleados.acciones.recaudos.index",
     },
     {
-        title: "POR ASIGNAR",
-        subtitle: "Recursos",
-        icon: "Users",
-        color: "emerald",
-        route: "empleados.acciones.index",
+        title: "CENTRO DE IMPRESIONES",
+        subtitle: "Documentaciones, clasificaciones",
+        icon: "FileSpreadsheet",
+        color: "rose",
+        route: "empleados.acciones.centro.impresiones",
+        
     },
     {
         title: "POR ASIGNAR",

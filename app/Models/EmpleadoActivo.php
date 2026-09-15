@@ -13,7 +13,7 @@ class EmpleadoActivo extends Model
     protected $table = 'empleado_activos'; // Aseguramos el nombre de la tabla
 
     protected $guarded = [];
-
+    protected $jsonOptions = JSON_UNESCAPED_UNICODE;
     protected $casts = [
         'area_de_trabajo' => 'array',
     ];
@@ -104,6 +104,15 @@ class EmpleadoActivo extends Model
     {
         // Un empleado tiene una configuración de guardia
         return $this->hasOne(VigilanteGuardia::class, 'empleado_id');
+    }
+    public function pagos()
+    {
+        return $this->hasMany(AccionPago::class, 'empleado_id');
+    }
+
+    public function pagosPorActividad($tipoId)
+    {
+        return $this->pagos()->where('accion_tipo_id', $tipoId);
     }
     
     public function permisos()

@@ -96,7 +96,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/institucion/inmuebles', [InmueblesController::class, 'index'])->name('institucion.inmuebles.index');
         Route::post('/institucion/inmuebles', [InmueblesController::class, 'store'])->name('institucion.inmuebles.store');
         Route::delete('/institucion/inmuebles{id}', [InmueblesController::class, 'destroy'])->name('institucion.inmuebles.destroy');
-        Route::post('/areas/store-fast', [InmueblesController::class, 'storeFastArea'])->name('areas.storeFast');
+        Route::post('/areas/store/fast', [InmueblesController::class, 'storeFastArea'])->name('areas.storeFast');
         // Rutas de Grados
         Route::get('/grados', [GradosController::class, 'index'])->name('grados.index');
         Route::post('/grados/store', [GradosController::class, 'store'])->name('grados.store');
@@ -188,7 +188,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/carnet{id}', [EmpleadosActivosController::class, 'carnet'])->name('carnet');
         Route::get('/destinos/empleados/check/{empleadoId}', [EmpleadosActivosController::class, 'check'])->name('destinos.empleados.check');
         Route::post('/destinos/empleados/storeDestino', [EmpleadosActivosController::class, 'storeDestino'])->name('destinos.empleados.storeDestino');
-        Route::get('/centro/de/impresiones', [EmpleadosActivosController::class, 'reportesIndex'])->name('centro.impresiones');
         // Rutas notificaciones empleados
         Route::get('/notificaciones', [NotificacionesController::class, 'index'])->name('notificaciones.index');
     });
@@ -226,6 +225,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/', function () {
             return Inertia::render('Empleados/Rutas/RutasAccionesGeneralesIndex');
         })->name('index');
+
+        Route::get('/centro/de/impresiones', [EmpleadosActivosController::class, 'reportesIndex'])->name('centro.impresiones');
+
         // Rutas empleados red wifi
         Route::get('/wifi', [ControlWifiController::class, 'index'])->name('wifi.index');
         Route::post('/wifi/store', [ControlWifiController::class, 'store'])->name('wifi.store');
@@ -234,6 +236,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/wifi/generar-periodo', [ControlWifiController::class, 'generarPeriodo'])->name('wifi.generar.periodo');
         Route::post('/wifi/toggle/{pagoId}', [ControlWifiController::class, 'togglePago'])->name('wifi.toggle');
         Route::get('/wifi/morosos', [ControlWifiController::class, 'morosos'])->name('wifi.morosos');
+      
         // Rutas asignar tallas y profesiones empleados
         Route::get('/recaudos', [EmpleadoRecaudoController::class, 'index'])->name('recaudos.index');
         Route::post('/store', [EmpleadoRecaudoController::class, 'store'])->name('recaudos.store');
@@ -265,7 +268,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/pagos/store', [AccionesDePagoController::class, 'storePago'])->name('pagos.store');
         Route::put('/pagos/update/{id}', [AccionesDePagoController::class, 'updatePago'])->name('pagos.update');
         Route::delete('/pagos/destroy/{id}', [AccionesDePagoController::class, 'destroyPago'])->name('pagos.destroy');
-        Route::get('/imprimir/reportes/pagos/{id}', [AccionesDePagoController::class, 'imprimirReporte'])->name('pagos.imprimir.reporte');
+        Route::post('/pagos/limpiar', [AccionesDePagoController::class, 'limpiarPagos'])->name('pagos.limpiar');
+
+        Route::get('/pagos/validar-ref', [AccionesDePagoController::class, 'validarReferencia'])->name('pagos.validar-ref');
+        Route::post('/pagos/store-especial', [AccionesDePagoController::class, 'storePagoEspecial'])->name('pagos.store-especial');
+
         Route::post('/tipos', [AccionesDePagoController::class, 'storeTipo'])->name('tipos.store');
         Route::put('/tipos/{id}', [AccionesDePagoController::class, 'updateTipo'])->name('tipos.update');
         Route::post('/tipos/{id}/cerrar', [AccionesDePagoController::class, 'cerrarActividad'])->name('tipos.cerrar');
